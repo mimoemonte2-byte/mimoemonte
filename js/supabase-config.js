@@ -4,8 +4,8 @@
    (Supabase > Project Settings > API):
    ========================================================= */
 
-const SUPABASE_URL = "COLE_AQUI_A_URL_DO_SEU_PROJETO_SUPABASE";
-const SUPABASE_ANON_KEY = "COLE_AQUI_A_ANON_PUBLIC_KEY_DO_SEU_PROJETO_SUPABASE";
+const SUPABASE_URL = "https://fmzvlffhjjemdiypafyt.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_nOGRU95wxoKrs4yYp7hWuA_yP7ShCdp";
 
 const supabaseClient = (
   typeof window.supabase !== "undefined" &&
