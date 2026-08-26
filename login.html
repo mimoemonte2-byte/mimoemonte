@@ -73,7 +73,13 @@
             </div>
             <div class="field">
               <label for="entrar-senha">Senha</label>
-              <input id="entrar-senha" type="password" required autocomplete="current-password">
+              <div class="password-field">
+                <input id="entrar-senha" type="password" required autocomplete="current-password">
+                <label class="password-toggle">
+                  <input type="checkbox" class="js-toggle-senha" data-target="entrar-senha">
+                  <span>Mostrar senha</span>
+                </label>
+              </div>
             </div>
             <button type="submit" class="btn btn-primary btn-block">Acessar minha conta</button>
           </form>
@@ -89,10 +95,15 @@
             </div>
             <div class="field">
               <label for="cad-senha">Senha</label>
-              <input id="cad-senha" type="password" required minlength="6" autocomplete="new-password">
+              <div class="password-field">
+                <input id="cad-senha" type="password" required minlength="6" autocomplete="new-password">
+                <label class="password-toggle">
+                  <input type="checkbox" class="js-toggle-senha" data-target="cad-senha">
+                  <span>Mostrar senha</span>
+                </label>
+              </div>
             </div>
             <button type="submit" class="btn btn-primary btn-block">Criar minha conta</button>
-            <p class="form-note">Ao se cadastrar, você poderá receber um e-mail de confirmação — verifique sua caixa de entrada.</p>
           </form>
         </div>
 
@@ -117,6 +128,13 @@
 <script src="js/main.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".js-toggle-senha").forEach(checkbox => {
+    checkbox.addEventListener("change", () => {
+      const input = document.querySelector("#" + checkbox.dataset.target);
+      if(input) input.type = checkbox.checked ? "text" : "password";
+    });
+  });
+
   if(!supabaseClient){
     document.querySelector("#supabase-missing").style.display = "block";
     document.querySelector("#auth-area").style.display = "none";

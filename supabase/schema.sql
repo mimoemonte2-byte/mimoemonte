@@ -39,6 +39,29 @@ drop policy if exists "profiles_update_own" on public.profiles;
 create policy "profiles_update_own" on public.profiles
   for update using (auth.uid() = id);
 
+-- Impede que o próprio cliente mude seu papel pra "gerente" (ex: pelo console do navegador).
+-- Só é possível promover alguém rodando o UPDATE diretamente no SQL Editor do Supabase.
+create or replace function public.protect_role_column()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if new.role is distinct from old.role then
+    if auth.uid() is not null and not public.is_gerente() then
+      new.role := old.role;
+    end if;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists profiles_protect_role on public.profiles;
+create trigger profiles_protect_role
+  before update on public.profiles
+  for each row execute procedure public.protect_role_column();
+
 -- Cria automaticamente um perfil quando alguém se cadastra
 create or replace function public.handle_new_user()
 returns trigger
