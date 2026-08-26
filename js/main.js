@@ -82,6 +82,7 @@ function initAccordion(){
 let CACHED_KITS = null;
 
 function mapDbKitToClient(row){
+  const photos = (row.photos && row.photos.length) ? row.photos : (row.photo_url ? [row.photo_url] : []);
   return {
     id: row.id,
     title: row.title,
@@ -92,7 +93,9 @@ function mapDbKitToClient(row){
     colorTo: row.color_to || "#FFB9A6",
     price: Number(row.price) || 0,
     status: row.status,
-    photo: row.photo_url,
+    photo: photos[0] || row.photo_url,
+    photos: photos,
+    description: row.description,
     refUrl: row.ref_url
   };
 }
@@ -243,23 +246,39 @@ async function initKitDetail(){
 
   document.title = `${kit.title} — Mimo & Monte`;
 
-  const photoHtml = kit.photo
-    ? `<img src="${kit.photo}" alt="${kit.title}">`
+  const photos = (kit.photos && kit.photos.length) ? kit.photos : (kit.photo ? [kit.photo] : []);
+
+  const mainPhotoHtml = photos.length
+    ? `<img src="${photos[0]}" alt="${kit.title}" class="kit-gallery-main" data-index="0">`
     : `<div class="kit-placeholder" style="background:linear-gradient(135deg, ${kit.colorFrom}, ${kit.colorTo}); min-height:340px;">
          <span class="icon" style="font-size:4rem;">${kit.icon}</span>
          <small>Foto de referência em atualização</small>
        </div>`;
 
+  const thumbsHtml = photos.length > 1
+    ? `<div class="kit-gallery-thumbs">${photos.map((p, i) => `
+        <button type="button" class="kit-gallery-thumb${i === 0 ? " active" : ""}" data-index="${i}">
+          <img src="${p}" alt="${kit.title} — foto ${i + 1}">
+        </button>`).join("")}</div>`
+    : "";
+
+  const descricaoHtml = kit.description
+    ? `<p>${kit.description}</p>`
+    : `<p>Informações detalhadas em atualização. Consulte nossa equipe.</p>`;
+
   const whatsMsg = `Olá! Tenho interesse no kit "${kit.title}" (R$ ${formatPrice(kit.price)}). Poderiam me ajudar a consultar a disponibilidade?`;
 
   el.innerHTML = `
     <div class="two-col">
-      <div class="round-photo">${photoHtml}</div>
+      <div>
+        <div class="round-photo kit-gallery" id="kit-gallery">${mainPhotoHtml}</div>
+        ${thumbsHtml}
+      </div>
       <div>
         <span class="eyebrow">${kit.categoryLabel}</span>
         <h1>${kit.title}</h1>
         <div class="kit-price" style="font-size:1.4rem; margin-bottom:16px;">Aluguel por <span>R$ ${formatPrice(kit.price)}</span></div>
-        <p>Informações detalhadas em atualização. Consulte nossa equipe.</p>
+        ${descricaoHtml}
         <div class="notice-box" style="margin-bottom:22px;">
           Foto meramente ilustrativa/referencial, em processo de substituição por fotos próprias da Mimo &amp; Monte.
         </div>
@@ -271,6 +290,7 @@ async function initKitDetail(){
     </div>
   `;
   initWhatsappLinks();
+  initKitGallery(photos);
 
   const relEl = document.querySelector("#kit-relacionados");
   if(relEl){
@@ -278,6 +298,72 @@ async function initKitDetail(){
     relEl.innerHTML = relacionados.map(renderKitCard).join("");
     initWhatsappLinks();
   }
+}
+
+/* ---------- Galeria de fotos do kit (miniaturas + zoom) ---------- */
+function initKitGallery(photos){
+  const mainImg = document.querySelector(".kit-gallery-main");
+  if(!mainImg || !photos.length) return;
+
+  document.querySelectorAll(".kit-gallery-thumb").forEach(thumb => {
+    thumb.addEventListener("click", () => {
+      const i = Number(thumb.dataset.index);
+      mainImg.src = photos[i];
+      mainImg.dataset.index = i;
+      document.querySelectorAll(".kit-gallery-thumb").forEach(t => t.classList.remove("active"));
+      thumb.classList.add("active");
+    });
+  });
+
+  mainImg.addEventListener("click", () => openLightbox(photos, Number(mainImg.dataset.index) || 0));
+}
+
+/* ---------- Lightbox (zoom da foto) — reutilizável em qualquer página ---------- */
+function openLightbox(photos, startIndex){
+  let index = startIndex || 0;
+  let lightbox = document.querySelector("#mimo-lightbox");
+  if(!lightbox){
+    lightbox = document.createElement("div");
+    lightbox.id = "mimo-lightbox";
+    lightbox.className = "mimo-lightbox";
+    lightbox.innerHTML = `
+      <button type="button" class="mimo-lightbox-close" aria-label="Fechar">✕</button>
+      <button type="button" class="mimo-lightbox-nav prev" aria-label="Foto anterior">‹</button>
+      <img class="mimo-lightbox-img" alt="">
+      <button type="button" class="mimo-lightbox-nav next" aria-label="Próxima foto">›</button>
+    `;
+    document.body.appendChild(lightbox);
+
+    lightbox.querySelector(".mimo-lightbox-close").addEventListener("click", closeLightbox);
+    lightbox.addEventListener("click", (e) => { if(e.target === lightbox) closeLightbox(); });
+    lightbox.querySelector(".prev").addEventListener("click", () => showLightboxPhoto(-1));
+    lightbox.querySelector(".next").addEventListener("click", () => showLightboxPhoto(1));
+    document.addEventListener("keydown", (e) => {
+      if(!lightbox.classList.contains("open")) return;
+      if(e.key === "Escape") closeLightbox();
+      if(e.key === "ArrowLeft") showLightboxPhoto(-1);
+      if(e.key === "ArrowRight") showLightboxPhoto(1);
+    });
+  }
+
+  function showLightboxPhoto(delta){
+    index = (index + delta + photos.length) % photos.length;
+    lightbox.querySelector(".mimo-lightbox-img").src = photos[index];
+  }
+
+  lightbox.querySelectorAll(".mimo-lightbox-nav").forEach(btn => {
+    btn.style.display = photos.length > 1 ? "flex" : "none";
+  });
+  lightbox.querySelector(".mimo-lightbox-img").src = photos[index];
+  lightbox.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeLightbox(){
+  const lightbox = document.querySelector("#mimo-lightbox");
+  if(!lightbox) return;
+  lightbox.classList.remove("open");
+  document.body.style.overflow = "";
 }
 
 /* ---------- Busca do cabeçalho ---------- */

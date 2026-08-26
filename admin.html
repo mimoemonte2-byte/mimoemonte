@@ -24,6 +24,13 @@
   .table-scroll{ overflow-x:auto; }
   .admin-panel{ display:none; }
   .admin-panel.active{ display:block; }
+  .admin-detail-row td{ background: var(--cream); border-radius: var(--radius-sm); padding: 20px; }
+  .admin-detail-box textarea{ width:100%; }
+  .admin-photos-grid{ display:flex; flex-wrap:wrap; gap:10px; margin-top:8px; }
+  .admin-photo-item{ position:relative; width:80px; height:80px; border-radius:10px; overflow:hidden; background:var(--white); box-shadow: var(--shadow-soft); }
+  .admin-photo-item img{ width:100%; height:100%; object-fit:cover; }
+  .admin-photo-remove{ position:absolute; top:2px; right:2px; width:22px; height:22px; border-radius:50%; border:none; background:rgba(20,26,41,.75); color:#fff; font-size:.75rem; line-height:1; }
+  .admin-photo-remove:hover{ background:var(--coral-dark); }
 </style>
 </head>
 <body>
@@ -247,14 +254,36 @@ document.addEventListener("DOMContentLoaded", async () => {
         </td>
         <td class="admin-actions-cell">
           <button class="btn btn-primary btn-sm js-save">Salvar</button>
+          <button class="btn btn-secondary btn-sm js-toggle-detalhes">📝 Detalhes</button>
           <a class="btn btn-ghost btn-sm" href="kit.html?id=${kit.id}" target="_blank">Ver</a>
           <button class="btn btn-ghost btn-sm js-delete">Apagar</button>
+        </td>
+      </tr>
+      <tr class="admin-detail-row" data-id="${kit.id}" style="display:none;">
+        <td colspan="6">
+          <div class="admin-detail-box">
+            <div class="field">
+              <label>Descrição do kit</label>
+              <textarea class="js-description" rows="3" placeholder="Descreva o kit...">${(kit.description || "").replace(/</g, "&lt;")}</textarea>
+            </div>
+            <div style="display:flex; justify-content:flex-end; margin:8px 0 18px;">
+              <button class="btn btn-primary btn-sm js-save-description">Salvar descrição</button>
+            </div>
+            <label>Fotos do kit <small class="form-note">(a primeira é a foto de capa usada nas listagens)</small></label>
+            <div class="admin-photos-grid js-photos-grid"></div>
+            <label class="btn btn-ghost btn-sm" style="margin-top:12px; display:inline-flex; cursor:pointer;">
+              + Adicionar foto
+              <input type="file" accept="image/*" class="js-add-photo" style="display:none;">
+            </label>
+          </div>
         </td>
       </tr>
     `).join("");
 
     tbody.querySelectorAll(".admin-row").forEach(row => {
       const id = row.dataset.id;
+      const kit = kits.find(k => k.id === id);
+      const detailRow = tbody.querySelector(`.admin-detail-row[data-id="${id}"]`);
       const photoInput = row.querySelector(".js-photo-input");
       const thumb = row.querySelector(".admin-thumb");
       let pendingFile = null;
@@ -281,10 +310,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             status: row.querySelector(".js-status").value
           };
           if(pendingFile){
-            changes.photo_url = await uploadKitPhoto(pendingFile, id);
+            const newUrl = await uploadKitPhoto(pendingFile, id);
+            changes.photo_url = newUrl;
+            changes.photos = [newUrl, ...(kit.photos || []).slice(1)];
           }
           const { error } = await supabaseClient.from("kits").update(changes).eq("id", id);
           if(error) throw error;
+          if(changes.photos){ kit.photos = changes.photos; kit.photo_url = changes.photo_url; renderPhotosGrid(); }
           btn.textContent = "Salvo ✓";
           setTimeout(() => { btn.textContent = "Salvar"; btn.disabled = false; }, 1200);
         }catch(err){
@@ -298,6 +330,68 @@ document.addEventListener("DOMContentLoaded", async () => {
         const { error } = await supabaseClient.from("kits").delete().eq("id", id);
         if(error){ alert("Erro ao apagar: " + error.message); return; }
         row.remove();
+        detailRow?.remove();
+      });
+
+      row.querySelector(".js-toggle-detalhes").addEventListener("click", () => {
+        detailRow.style.display = detailRow.style.display === "none" ? "table-row" : "none";
+      });
+
+      function renderPhotosGrid(){
+        const grid = detailRow.querySelector(".js-photos-grid");
+        const photos = kit.photos || [];
+        grid.innerHTML = photos.length
+          ? photos.map((url, i) => `
+              <div class="admin-photo-item">
+                <img src="${url}" alt="Foto ${i + 1}">
+                <button type="button" class="admin-photo-remove js-remove-photo" data-index="${i}" title="Remover foto">✕</button>
+              </div>`).join("")
+          : `<p class="form-note">Nenhuma foto na galeria ainda.</p>`;
+
+        grid.querySelectorAll(".js-remove-photo").forEach(btn => {
+          btn.addEventListener("click", async () => {
+            if(!confirm("Remover esta foto da galeria?")) return;
+            const idx = Number(btn.dataset.index);
+            const newPhotos = kit.photos.filter((_, i) => i !== idx);
+            const changes = { photos: newPhotos, photo_url: newPhotos[0] || null };
+            const { error } = await supabaseClient.from("kits").update(changes).eq("id", id);
+            if(error){ alert("Erro: " + error.message); return; }
+            kit.photos = newPhotos;
+            kit.photo_url = changes.photo_url;
+            renderPhotosGrid();
+          });
+        });
+      }
+      renderPhotosGrid();
+
+      detailRow.querySelector(".js-add-photo").addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if(!file) return;
+        try{
+          const url = await uploadKitPhoto(file, id);
+          const newPhotos = [...(kit.photos || []), url];
+          const changes = { photos: newPhotos };
+          if(!kit.photo_url) changes.photo_url = url;
+          const { error } = await supabaseClient.from("kits").update(changes).eq("id", id);
+          if(error) throw error;
+          kit.photos = newPhotos;
+          if(!kit.photo_url) kit.photo_url = url;
+          renderPhotosGrid();
+        }catch(err){
+          alert("Erro ao enviar foto: " + err.message);
+        }
+      });
+
+      detailRow.querySelector(".js-save-description").addEventListener("click", async (e) => {
+        const btn = e.target;
+        btn.disabled = true; btn.textContent = "Salvando...";
+        const description = detailRow.querySelector(".js-description").value.trim();
+        const { error } = await supabaseClient.from("kits").update({ description }).eq("id", id);
+        btn.disabled = false;
+        if(error){ alert("Erro: " + error.message); return; }
+        kit.description = description;
+        btn.textContent = "Salvo ✓";
+        setTimeout(() => { btn.textContent = "Salvar descrição"; }, 1200);
       });
     });
   }

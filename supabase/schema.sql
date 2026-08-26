@@ -96,10 +96,21 @@ create table if not exists public.kits (
   price numeric not null default 180,
   status text not null default 'disponivel' check (status in ('disponivel','indisponivel')),
   photo_url text,
+  photos text[] not null default '{}',
+  description text,
   ref_url text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- Caso a tabela já exista de uma instalação anterior, garante as colunas novas:
+alter table public.kits add column if not exists photos text[] not null default '{}';
+alter table public.kits add column if not exists description text;
+
+-- Preenche a galeria com a foto que já existia, para quem ainda não tem "photos"
+update public.kits
+  set photos = array[photo_url]
+  where photo_url is not null and coalesce(array_length(photos, 1), 0) = 0;
 
 alter table public.kits enable row level security;
 
@@ -245,6 +256,34 @@ select * from (values
   ('happy-birthday-2', 'Trio Capa Cilindro + Painel Tema Happy Birthday Veste Fácil – Rosê', 'aniversario', 'Aniversário', '🎈', '#DCEBFC', '#A9CEF5', 180, 'disponivel', 'images/kits/happy-birthday-2.jpg', 'https://produto.mercadolivre.com.br/MLB-2684826911-trio-capa-cilindro-painel-tema-happy-birthday-veste-facil-_JM')
 ) as seed(id, title, category, category_label, icon, color_from, color_to, price, status, photo_url, ref_url)
 where not exists (select 1 from public.kits);
+
+-- ---------------------------------------------------------
+-- 5b) Descrições de exemplo (texto provisório — edite pelo Painel
+--     Gerente quando tiver a descrição real de cada kit).
+--     Só preenche quem ainda está sem descrição, então é seguro
+--     rodar de novo sem apagar o que você já editou.
+-- ---------------------------------------------------------
+update public.kits k set description = d.description
+from (values
+  ('hulk-vingador', 'Traga a força dos heróis para a festa! Painel temático + trio de cilindros com visual incrível, perfeitos para uma comemoração inesquecível. Fácil de montar, leve e resistente — pronto para deixar a decoração poderosa.'),
+  ('morcego', 'Para os fãs do herói da noite! Painel de 1,5m e trio de capas de cilindro com tema morcego, ideais para uma festa cheia de mistério e aventura. Montagem simples, no estilo pegue e monte.'),
+  ('bailarina', 'Um toque de delicadeza e charme para a festa da pequena bailarina! Painel e capas de cilindro em tons suaves, perfeitos para aniversários encantadores.'),
+  ('temas-comemorativos', 'Kit versátil com capas de cilindro e painel de 1,50m em tecido, ideal para diversas comemorações. Visual alegre e colorido, fácil de higienizar e reutilizar.'),
+  ('cavalos', 'Para quem ama o campo e os animais! Painel redondo com tema cavalos e trio de cilindros combinando, trazendo charme rústico para a decoração.'),
+  ('roblox', 'Para os fãs de games! Painel redondo e trio de cilindros sublimados com tema Roblox, cheio de cor e diversão para a festa da criançada.'),
+  ('temas-herois-trio', 'Um trio completo de capas de cilindro + painel redondo com tema heróis, para uma decoração cheia de ação e cores vibrantes.'),
+  ('super-herois-289', 'Painel e trio de capas de cilindro com tema super-heróis, ideal para festas cheias de aventura e poderes especiais.'),
+  ('anime-decor', 'Capas de cilindro e painel com tema anime, trazendo um visual moderno e cheio de personalidade para a festa.'),
+  ('boteco-2', 'Kit completo para festas estilo boteco! Painel e capas de cilindro com visual descontraído, perfeito para comemorações entre amigos.'),
+  ('super-herois-290', 'Mais uma opção super-herói! Painel e trio de capas de cilindro com visual vibrante para uma festa cheia de energia.'),
+  ('safari', 'Clima de aventura e natureza! Painel redondo de 1,50m com capas de cilindro 3D no tema safari, perfeito para uma festa cheia de charme selvagem.'),
+  ('cha-revelacao', 'Painel redondo e capas de cilindro pensados especialmente para o chá revelação — um momento único e cheio de emoção, com decoração à altura.'),
+  ('veste-facil', 'Capa de painel redondo + trio de cilindro fácil de vestir, para uma decoração prática, bonita e rápida de montar.'),
+  ('mais-vendidos', 'Um dos queridinhos da nossa clientela! Trio de capas de cilindro + painel com visual coringa, combinando com diversos temas de festa.'),
+  ('happy-birthday-1', 'Elegância em preto e dourado! Trio de capa de cilindro + painel tema Happy Birthday, perfeito para aniversários sofisticados.'),
+  ('happy-birthday-2', 'Delicadeza em tom rosê! Trio de capa de cilindro + painel tema Happy Birthday, ideal para festas de aniversário cheias de charme.')
+) as d(id, description)
+where k.id = d.id and k.description is null;
 
 -- ---------------------------------------------------------
 -- 6) Promover seu usuário para Gerente (admin)

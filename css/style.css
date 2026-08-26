@@ -790,6 +790,77 @@ p{ margin: 0 0 1em; }
   box-shadow: var(--shadow-card);
 }
 
+/* ---------- Galeria de fotos do kit ---------- */
+.kit-gallery-main{ cursor: zoom-in; width: 100%; display: block; }
+.kit-gallery-thumbs{
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.kit-gallery-thumb{
+  width: 68px; height: 68px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 3px solid transparent;
+  padding: 0;
+  background: var(--cream);
+  flex-shrink: 0;
+}
+.kit-gallery-thumb img{ width: 100%; height: 100%; object-fit: cover; }
+.kit-gallery-thumb.active{ border-color: var(--coral-dark); }
+.kit-gallery-thumb:hover{ border-color: var(--blue-pastel-dark); }
+
+/* ---------- Lightbox (zoom da foto) ---------- */
+.mimo-lightbox{
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(20, 26, 41, .92);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.mimo-lightbox.open{ display: flex; }
+.mimo-lightbox-img{
+  max-width: min(92vw, 1000px);
+  max-height: 88vh;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+}
+.mimo-lightbox-close{
+  position: absolute;
+  top: 20px; right: 20px;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.15);
+  color: var(--white);
+  border: none;
+  font-size: 1.2rem;
+}
+.mimo-lightbox-close:hover{ background: rgba(255,255,255,.28); }
+.mimo-lightbox-nav{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.15);
+  color: var(--white);
+  border: none;
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mimo-lightbox-nav:hover{ background: rgba(255,255,255,.28); }
+.mimo-lightbox-nav.prev{ left: 20px; }
+.mimo-lightbox-nav.next{ right: 20px; }
+@media (max-width: 640px){
+  .mimo-lightbox-nav{ width: 42px; height: 42px; font-size: 1.4rem; }
+}
+
 /* =========================================================
    Área do usuário — avatar / login (cabeçalho)
    ========================================================= */
