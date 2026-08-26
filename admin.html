@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Gerente — Mimo & Monte</title>
+<link rel="icon" href="images/logo.png">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .admin-table{ width:100%; border-collapse: separate; border-spacing: 0 14px; }
+  .admin-table th{ text-align:left; font-family: var(--font-title); font-size:.82rem; color: var(--navy-soft); padding: 0 14px; }
+  .admin-row{ background: var(--white); box-shadow: var(--shadow-soft); }
+  .admin-row td{ padding: 14px; vertical-align: middle; }
+  .admin-row td:first-child{ border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+  .admin-row td:last-child{ border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+  .admin-thumb{ width:64px; height:64px; border-radius: 12px; overflow:hidden; background: var(--cream); display:flex; align-items:center; justify-content:center; font-size:1.6rem; flex-shrink:0; }
+  .admin-thumb img{ width:100%; height:100%; object-fit:cover; }
+  .admin-title-input{ width: 100%; min-width: 220px; }
+  .admin-actions-cell{ display:flex; gap:8px; flex-wrap:wrap; }
+  .table-scroll{ overflow-x:auto; }
+  .admin-panel{ display:none; }
+  .admin-panel.active{ display:block; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img src="images/logo.png" alt="Mimo & Monte">
+      <span class="brand-name">Mimo &amp; Monte</span>
+    </a>
+    <div class="header-actions">
+      <a class="btn btn-ghost btn-sm" href="index.html">← Voltar ao site</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero bg-lilac" style="padding:40px 0 50px;">
+    <div class="container">
+      <span class="eyebrow">🛠️ Painel Gerente</span>
+      <h1 id="admin-titulo">Painel Gerente</h1>
+      <p>Gerencie o catálogo de kits e responda às dúvidas recebidas pelo site.</p>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+
+      <div id="admin-bloqueado" class="notice-box" style="display:none;"></div>
+
+      <div id="admin-conteudo" style="display:none;">
+
+        <div class="admin-tabs">
+          <button type="button" class="btn btn-secondary btn-sm admin-tab-btn active" data-panel="painel-kits">📦 Kits</button>
+          <button type="button" class="btn btn-ghost btn-sm admin-tab-btn" data-panel="painel-duvidas">💬 Dúvidas recebidas <span id="duvidas-pendentes-badge"></span></button>
+        </div>
+
+        <!-- ===================== KITS ===================== -->
+        <div id="painel-kits" class="admin-panel active">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:16px;">
+            <span></span>
+            <button class="btn btn-primary btn-sm" id="novo-kit-btn">+ Novo kit</button>
+          </div>
+
+          <div class="table-scroll">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Foto</th>
+                  <th>Título</th>
+                  <th>Categoria</th>
+                  <th>Preço (R$)</th>
+                  <th>Disponibilidade</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="admin-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ===================== DÚVIDAS ===================== -->
+        <div id="painel-duvidas" class="admin-panel">
+          <div class="notice-box" style="margin-bottom:20px;">
+            Mensagens enviadas pelo botão de dúvidas (mascote da Mimo). Responda o cliente diretamente por e-mail ou WhatsApp e depois marque como respondida.
+          </div>
+          <div class="table-scroll">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Quando</th>
+                  <th>Nome</th>
+                  <th>Contato</th>
+                  <th>Mensagem</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="duvidas-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom" style="border-top:none; margin-top:0; padding-top:0;">
+      <span>&copy; 2026 Mimo &amp; Monte — Painel Gerente</span>
+      <span><a href="index.html">Voltar à Home</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const bloqueado = document.querySelector("#admin-bloqueado");
+  const conteudo = document.querySelector("#admin-conteudo");
+
+  if(!supabaseClient){
+    bloqueado.style.display = "block";
+    bloqueado.textContent = "Configure o Supabase (arquivo js/supabase-config.js) e rode o script supabase/schema.sql para ativar o Painel Gerente.";
+    return;
+  }
+
+  const user = await getCurrentUser();
+  if(!user){
+    window.location.href = "login.html?redirect=admin.html";
+    return;
+  }
+  const profile = await getProfile(user.id);
+  if(profile?.role !== "gerente"){
+    bloqueado.style.display = "block";
+    bloqueado.textContent = "Esta área é exclusiva do Gerente. Sua conta (" + user.email + ") não tem essa permissão.";
+    return;
+  }
+
+  conteudo.style.display = "block";
+  document.querySelector("#admin-titulo").textContent = "Painel Gerente — olá, " + (profile.nome || user.email);
+
+  /* ---------- Navegação entre abas ---------- */
+  document.querySelectorAll(".admin-tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".admin-tab-btn").forEach(b => { b.classList.remove("active"); b.classList.remove("btn-secondary"); b.classList.add("btn-ghost"); });
+      btn.classList.add("active"); btn.classList.remove("btn-ghost"); btn.classList.add("btn-secondary");
+      document.querySelectorAll(".admin-panel").forEach(p => p.classList.remove("active"));
+      document.querySelector("#" + btn.dataset.panel).classList.add("active");
+    });
+  });
+
+  /* ============================================================
+     KITS
+     ============================================================ */
+  const tbody = document.querySelector("#admin-tbody");
+
+  function slugify(str){
+    const accentMap = { "á":"a","à":"a","ã":"a","â":"a","ä":"a","é":"e","ê":"e","è":"e","ë":"e","í":"i","ì":"i","î":"i","ï":"i","ó":"o","ò":"o","õ":"o","ô":"o","ö":"o","ú":"u","ù":"u","û":"u","ü":"u","ç":"c","ñ":"n" };
+    const lowered = (str || "kit").toString().toLowerCase();
+    const replaced = lowered.split("").map(ch => accentMap[ch] || ch).join("");
+    return replaced.trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "kit";
+  }
+
+  async function uploadKitPhoto(file, kitId){
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+    const path = `${kitId}-${Date.now()}.${ext}`;
+    const { error } = await supabaseClient.storage.from("kits").upload(path, file, { upsert: true });
+    if(error) throw error;
+    const { data } = supabaseClient.storage.from("kits").getPublicUrl(path);
+    return data.publicUrl;
+  }
+
+  async function fetchKits(){
+    const { data, error } = await supabaseClient.from("kits").select("*").order("created_at", { ascending: true });
+    if(error){ alert("Erro ao carregar kits: " + error.message); return []; }
+    return data;
+  }
+
+  async function renderKitsTable(){
+    const kits = await fetchKits();
+    const categoryOptions = [...new Set(kits.map(k => k.category))].map(cat => {
+      const found = kits.find(k => k.category === cat);
+      return { value: cat, label: found.category_label };
+    });
+
+    tbody.innerHTML = kits.map(kit => `
+      <tr class="admin-row" data-id="${kit.id}">
+        <td>
+          <label class="admin-thumb" style="cursor:pointer;" title="Clique para enviar uma foto">
+            ${kit.photo_url ? `<img src="${kit.photo_url}" alt="${kit.title}">` : (kit.icon || "🎁")}
+            <input type="file" accept="image/*" class="js-photo-input" style="display:none;">
+          </label>
+        </td>
+        <td><input type="text" class="js-title admin-title-input" value="${(kit.title || "").replace(/"/g, "&quot;")}"></td>
+        <td>
+          <select class="js-category">
+            ${categoryOptions.map(c => `<option value="${c.value}" ${c.value === kit.category ? "selected" : ""}>${c.label}</option>`).join("")}
+          </select>
+        </td>
+        <td><input type="number" class="js-price" value="${kit.price}" min="0" step="10" style="width:100px;"></td>
+        <td>
+          <select class="js-status">
+            <option value="disponivel" ${kit.status === "disponivel" ? "selected" : ""}>Disponível</option>
+            <option value="indisponivel" ${kit.status !== "disponivel" ? "selected" : ""}>Indisponível</option>
+          </select>
+        </td>
+        <td class="admin-actions-cell">
+          <button class="btn btn-primary btn-sm js-save">Salvar</button>
+          <a class="btn btn-ghost btn-sm" href="kit.html?id=${kit.id}" target="_blank">Ver</a>
+          <button class="btn btn-ghost btn-sm js-delete">Apagar</button>
+        </td>
+      </tr>
+    `).join("");
+
+    tbody.querySelectorAll(".admin-row").forEach(row => {
+      const id = row.dataset.id;
+      const photoInput = row.querySelector(".js-photo-input");
+      const thumb = row.querySelector(".admin-thumb");
+      let pendingFile = null;
+
+      photoInput.addEventListener("change", () => {
+        const file = photoInput.files[0];
+        if(!file) return;
+        pendingFile = file;
+        const reader = new FileReader();
+        reader.onload = () => { thumb.innerHTML = `<img src="${reader.result}" alt="preview">`; };
+        reader.readAsDataURL(file);
+      });
+
+      row.querySelector(".js-save").addEventListener("click", async (e) => {
+        const btn = e.target;
+        btn.disabled = true; btn.textContent = "Salvando...";
+        try{
+          const categoryValue = row.querySelector(".js-category").value;
+          const changes = {
+            title: row.querySelector(".js-title").value.trim(),
+            category: categoryValue,
+            category_label: categoryOptions.find(c => c.value === categoryValue)?.label || categoryValue,
+            price: Number(row.querySelector(".js-price").value) || 0,
+            status: row.querySelector(".js-status").value
+          };
+          if(pendingFile){
+            changes.photo_url = await uploadKitPhoto(pendingFile, id);
+          }
+          const { error } = await supabaseClient.from("kits").update(changes).eq("id", id);
+          if(error) throw error;
+          btn.textContent = "Salvo ✓";
+          setTimeout(() => { btn.textContent = "Salvar"; btn.disabled = false; }, 1200);
+        }catch(err){
+          alert("Erro ao salvar: " + err.message);
+          btn.disabled = false; btn.textContent = "Salvar";
+        }
+      });
+
+      row.querySelector(".js-delete").addEventListener("click", async () => {
+        if(!confirm("Apagar este kit definitivamente? Essa ação não pode ser desfeita.")) return;
+        const { error } = await supabaseClient.from("kits").delete().eq("id", id);
+        if(error){ alert("Erro ao apagar: " + error.message); return; }
+        row.remove();
+      });
+    });
+  }
+
+  document.querySelector("#novo-kit-btn").addEventListener("click", async () => {
+    const title = prompt("Título do novo kit:");
+    if(!title) return;
+    const category = prompt("Categoria (ex: herois, animais, aniversario...):", "variados") || "variados";
+    const categoryLabel = prompt("Nome de exibição da categoria:", category) || category;
+    const price = Number(prompt("Preço do aluguel (R$):", "180")) || 180;
+    const id = slugify(title) + "-" + Date.now().toString(36).slice(-4);
+
+    const { error } = await supabaseClient.from("kits").insert({
+      id, title, category, category_label: categoryLabel, price,
+      status: "disponivel", icon: "🎁", color_from: "#FFE3DB", color_to: "#FFB9A6"
+    });
+    if(error){ alert("Erro ao criar kit: " + error.message); return; }
+    renderKitsTable();
+  });
+
+  await renderKitsTable();
+
+  /* ============================================================
+     DÚVIDAS
+     ============================================================ */
+  const duvidasTbody = document.querySelector("#duvidas-tbody");
+  const badge = document.querySelector("#duvidas-pendentes-badge");
+
+  function formatDate(iso){
+    return new Date(iso).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+  }
+
+  async function renderDuvidas(){
+    const { data, error } = await supabaseClient.from("duvidas").select("*").order("created_at", { ascending: false });
+    if(error){ duvidasTbody.innerHTML = `<tr><td colspan="6">Erro ao carregar: ${error.message}</td></tr>`; return; }
+
+    const pendentes = data.filter(d => d.status === "pendente").length;
+    badge.textContent = pendentes ? `(${pendentes})` : "";
+
+    if(!data.length){
+      duvidasTbody.innerHTML = `<tr><td colspan="6" style="padding:20px; color:var(--navy-soft);">Nenhuma dúvida recebida ainda.</td></tr>`;
+      return;
+    }
+
+    duvidasTbody.innerHTML = data.map(d => `
+      <tr class="admin-row" data-id="${d.id}">
+        <td>${formatDate(d.created_at)}</td>
+        <td>${d.nome || "—"}</td>
+        <td>${d.email || "—"}</td>
+        <td style="max-width:320px; white-space:pre-wrap;">${(d.mensagem || "").replace(/</g, "&lt;")}</td>
+        <td><span class="status-pill ${d.status}">${d.status === "respondida" ? "Respondida" : "Pendente"}</span></td>
+        <td class="admin-actions-cell">
+          ${d.status !== "respondida" ? `<button class="btn btn-primary btn-sm js-marcar">Marcar respondida</button>` : ""}
+        </td>
+      </tr>
+    `).join("");
+
+    duvidasTbody.querySelectorAll(".js-marcar").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const id = btn.closest(".admin-row").dataset.id;
+        const { error } = await supabaseClient.from("duvidas").update({ status: "respondida" }).eq("id", id);
+        if(error){ alert("Erro: " + error.message); return; }
+        renderDuvidas();
+      });
+    });
+  }
+
+  await renderDuvidas();
+});
+</script>
+</body>
+</html>

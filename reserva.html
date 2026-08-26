@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minha reserva — Mimo & Monte</title>
+<link rel="icon" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img src="images/logo.png" alt="Mimo & Monte">
+      <span class="brand-name">Mimo &amp; Monte</span>
+    </a>
+    <nav class="main-nav">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="sobre.html">Sobre nós</a></li>
+        <li><a href="kits.html">Kit's</a></li>
+        <li><a href="contato.html">Contato</a></li>
+        <li><a href="duvidas.html">Dúvidas</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <div class="header-search">
+        <button class="icon-btn" id="search-toggle" aria-label="Buscar kits">🔍</button>
+        <form class="js-search-form header-search-popover" id="header-search-popover">
+          <input type="search" placeholder="Buscar por tema...">
+          <button type="submit" aria-label="Buscar">🔍</button>
+        </form>
+      </div>
+      <a class="reserva-link" href="reserva.html" style="background:var(--yellow-pastel);">📦 Minha reserva</a>
+      <a class="btn btn-primary" data-whatsapp="" href="#">Consultar disponibilidade</a>
+      <button class="hamburger" aria-label="Abrir menu" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+  <nav class="mobile-nav">
+    <form class="js-search-form mobile-search">
+      <input type="search" placeholder="Buscar por tema...">
+      <button class="btn btn-secondary btn-sm" type="submit">Ir</button>
+    </form>
+    <a href="index.html">Home</a>
+    <a href="sobre.html">Sobre nós</a>
+    <a href="kits.html">Kit's</a>
+    <a href="contato.html">Contato</a>
+    <a href="duvidas.html">Dúvidas</a>
+    <a href="reserva.html">📦 Minha reserva</a>
+    <a class="btn btn-primary btn-block" data-whatsapp="" href="#">Consultar disponibilidade</a>
+  </nav>
+</header>
+
+<main>
+
+  <section class="page-hero bg-cream">
+    <div class="container">
+      <span class="eyebrow">📦 Reserva</span>
+      <h1>Minha reserva</h1>
+      <p>Preencha os dados abaixo para solicitar a consulta de disponibilidade do seu kit. Lembrando: a solicitação não garante a reserva da data — ela só é confirmada com o pagamento do sinal de 50%.</p>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <div class="two-col" style="align-items:flex-start;">
+
+        <div class="filters-card">
+          <h3>Solicitar consulta de reserva</h3>
+          <form id="reserva-form" class="stack" style="margin-top:16px;">
+            <div class="form-grid cols-2">
+              <div class="field">
+                <label for="r-nome">Nome completo</label>
+                <input type="text" id="r-nome" required>
+              </div>
+              <div class="field">
+                <label for="r-telefone">Telefone / WhatsApp</label>
+                <input type="tel" id="r-telefone" required>
+              </div>
+            </div>
+            <div class="field">
+              <label for="r-kit">Kit desejado</label>
+              <select id="r-kit"></select>
+            </div>
+            <div class="form-grid cols-2">
+              <div class="field">
+                <label for="r-retirada">Data de retirada</label>
+                <input type="date" id="r-retirada">
+              </div>
+              <div class="field">
+                <label for="r-devolucao">Data de devolução</label>
+                <input type="date" id="r-devolucao">
+              </div>
+            </div>
+            <div class="field">
+              <label for="r-obs">Observações</label>
+              <textarea id="r-obs" placeholder="Conte um pouco sobre o seu evento, se quiser :)"></textarea>
+            </div>
+            <button class="btn btn-whatsapp btn-block" type="submit">💬 Enviar solicitação pelo WhatsApp</button>
+            <p class="form-note">Ao enviar, abriremos o WhatsApp com sua solicitação já preenchida para nossa equipe confirmar a disponibilidade.</p>
+          </form>
+        </div>
+
+        <div class="stack">
+          <div class="notice-box">
+            <strong>Como funciona a confirmação:</strong> a reserva só é garantida após o pagamento de 50% do valor total (sinal). Consulte todas as regras na nossa <a href="contrato.html">Política de locação</a>.
+          </div>
+          <div class="benefit" style="text-align:left;">
+            <span class="icon">1️⃣</span>
+            <h3>Envie sua solicitação</h3>
+            <p>Preencha o formulário com o kit e as datas desejadas.</p>
+          </div>
+          <div class="benefit" style="text-align:left;">
+            <span class="icon">2️⃣</span>
+            <h3>Confirmamos disponibilidade</h3>
+            <p>Nossa equipe verifica a data e envia os detalhes de pagamento do sinal.</p>
+          </div>
+          <div class="benefit" style="text-align:left;">
+            <span class="icon">3️⃣</span>
+            <h3>Reserva confirmada</h3>
+            <p>Com o sinal de 50% pago, sua data fica garantida.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="images/logo.png" alt="Mimo & Monte">
+        <p>Kits de decoração Pegue e Monte para festas inesquecíveis, com praticidade, carinho e economia.</p>
+        <div class="footer-social">
+          <a data-fill="instagramUrl" href="#" aria-label="Instagram">📷</a>
+          <a data-whatsapp="" href="#" aria-label="WhatsApp">💬</a>
+        </div>
+      </div>
+      <div>
+        <h4>Navegação</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="sobre.html">Sobre nós</a></li>
+          <li><a href="kits.html">Kit's</a></li>
+          <li><a href="contato.html">Contato</a></li>
+          <li><a href="duvidas.html">Dúvidas</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Institucional</h4>
+        <ul>
+          <li><a href="reserva.html">Minha reserva</a></li>
+          <li><a href="contrato.html">Política de locação</a></li>
+          <li><a href="privacidade.html">Política de privacidade</a></li>
+          <li><a href="admin.html">Painel administrativo</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contato</h4>
+        <ul>
+          <li data-fill="telefone">[Telefone a confirmar]</li>
+          <li data-fill="email">[e-mail a confirmar]</li>
+          <li data-fill="endereco">[Endereço a confirmar]</li>
+          <li data-fill="horario">[Horário a confirmar]</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Mimo &amp; Monte. Todos os direitos reservados.</span>
+      <span><a href="privacidade.html">Política de privacidade</a> · <a href="contrato.html">Política de locação</a></span>
+    </div>
+  </div>
+</footer>
+<a class="whats-float" data-whatsapp="" href="#" aria-label="Falar no WhatsApp">💬</a>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/duvidas-widget.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const select = document.querySelector("#r-kit");
+    KITS.forEach(k => {
+      const opt = document.createElement("option");
+      opt.value = k.id; opt.textContent = k.title;
+      select.appendChild(opt);
+    });
+    const params = new URLSearchParams(location.search);
+    if(params.get("id")) select.value = params.get("id");
+
+    document.querySelector("#reserva-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const nome = document.querySelector("#r-nome").value;
+      const telefone = document.querySelector("#r-telefone").value;
+      const kit = KITS.find(k => k.id === select.value);
+      const retirada = document.querySelector("#r-retirada").value;
+      const devolucao = document.querySelector("#r-devolucao").value;
+      const obs = document.querySelector("#r-obs").value;
+
+      let msg = `Olá! Gostaria de consultar disponibilidade para reserva.\n`;
+      msg += `Nome: ${nome}\nTelefone: ${telefone}\nKit: ${kit ? kit.title : ""}\n`;
+      if(retirada) msg += `Retirada: ${retirada}\n`;
+      if(devolucao) msg += `Devolução: ${devolucao}\n`;
+      if(obs) msg += `Observações: ${obs}\n`;
+
+      window.open(whatsappLink(msg), "_blank");
+    });
+  });
+</script>
+</body>
+</html>

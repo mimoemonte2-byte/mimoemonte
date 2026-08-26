@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entrar — Mimo & Monte</title>
+<link rel="icon" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img src="images/logo.png" alt="Mimo & Monte">
+      <span class="brand-name">Mimo &amp; Monte</span>
+    </a>
+    <nav class="main-nav">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="sobre.html">Sobre nós</a></li>
+        <li><a href="kits.html">Kit's</a></li>
+        <li><a href="contato.html">Contato</a></li>
+        <li><a href="duvidas.html">Dúvidas</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-ghost btn-sm" href="index.html">← Voltar ao site</a>
+      <button class="hamburger" aria-label="Abrir menu" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+  <nav class="mobile-nav">
+    <a href="index.html">Home</a>
+    <a href="sobre.html">Sobre nós</a>
+    <a href="kits.html">Kit's</a>
+    <a href="contato.html">Contato</a>
+    <a href="duvidas.html">Dúvidas</a>
+  </nav>
+</header>
+
+<main>
+  <section class="page-hero bg-lilac">
+    <div class="container">
+      <span class="eyebrow">🔐 Área do cliente</span>
+      <h1>Entrar ou criar conta</h1>
+      <p>Acesse para acompanhar suas reservas e personalizar seu perfil.</p>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <div class="auth-card">
+
+        <div id="supabase-missing" class="notice-box" style="display:none; margin-bottom:22px;">
+          O login ainda não foi configurado neste site. Assim que o Supabase for conectado (arquivo <code>js/supabase-config.js</code>), esta página passa a funcionar normalmente.
+        </div>
+
+        <div id="auth-area">
+          <div class="auth-tabs">
+            <button type="button" class="auth-tab active" data-tab="entrar">Entrar</button>
+            <button type="button" class="auth-tab" data-tab="cadastrar">Criar conta</button>
+          </div>
+
+          <div class="auth-error" id="auth-error"></div>
+
+          <form id="form-entrar" class="auth-form active">
+            <div class="field">
+              <label for="entrar-email">E-mail</label>
+              <input id="entrar-email" type="email" required autocomplete="email">
+            </div>
+            <div class="field">
+              <label for="entrar-senha">Senha</label>
+              <input id="entrar-senha" type="password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Acessar minha conta</button>
+          </form>
+
+          <form id="form-cadastrar" class="auth-form">
+            <div class="field">
+              <label for="cad-nome">Nome</label>
+              <input id="cad-nome" type="text" required autocomplete="name">
+            </div>
+            <div class="field">
+              <label for="cad-email">E-mail</label>
+              <input id="cad-email" type="email" required autocomplete="email">
+            </div>
+            <div class="field">
+              <label for="cad-senha">Senha</label>
+              <input id="cad-senha" type="password" required minlength="6" autocomplete="new-password">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Criar minha conta</button>
+            <p class="form-note">Ao se cadastrar, você poderá receber um e-mail de confirmação — verifique sua caixa de entrada.</p>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom" style="border-top:none; margin-top:0; padding-top:0;">
+      <span>&copy; 2026 Mimo &amp; Monte. Todos os direitos reservados.</span>
+      <span><a href="index.html">Voltar à Home</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  if(!supabaseClient){
+    document.querySelector("#supabase-missing").style.display = "block";
+    document.querySelector("#auth-area").style.display = "none";
+    return;
+  }
+
+  const tabs = document.querySelectorAll(".auth-tab");
+  const forms = { entrar: document.querySelector("#form-entrar"), cadastrar: document.querySelector("#form-cadastrar") };
+  const errorBox = document.querySelector("#auth-error");
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      Object.values(forms).forEach(f => f.classList.remove("active"));
+      forms[tab.dataset.tab].classList.add("active");
+      errorBox.classList.remove("show");
+    });
+  });
+
+  function showError(err){
+    const msg = (err && err.message) ? err.message : "Não foi possível concluir. Tente novamente.";
+    errorBox.textContent = msg;
+    errorBox.classList.add("show");
+  }
+
+  function redirectAfterLogin(){
+    const params = new URLSearchParams(location.search);
+    window.location.href = params.get("redirect") || "index.html";
+  }
+
+  forms.entrar.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorBox.classList.remove("show");
+    try{
+      await signIn(document.querySelector("#entrar-email").value.trim(), document.querySelector("#entrar-senha").value);
+      redirectAfterLogin();
+    }catch(err){ showError(err); }
+  });
+
+  forms.cadastrar.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorBox.classList.remove("show");
+    try{
+      const data = await signUp(
+        document.querySelector("#cad-email").value.trim(),
+        document.querySelector("#cad-senha").value,
+        document.querySelector("#cad-nome").value.trim()
+      );
+      if(data.session){
+        redirectAfterLogin();
+      } else {
+        errorBox.textContent = "Conta criada! Verifique seu e-mail para confirmar o acesso e depois faça login.";
+        errorBox.classList.add("show");
+        errorBox.style.background = "#E3F6EA";
+        errorBox.style.color = "#1F6B4A";
+      }
+    }catch(err){ showError(err); }
+  });
+});
+</script>
+</body>
+</html>

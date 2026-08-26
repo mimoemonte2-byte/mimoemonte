@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minha conta — Mimo & Monte</title>
+<link rel="icon" href="images/logo.png">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img src="images/logo.png" alt="Mimo & Monte">
+      <span class="brand-name">Mimo &amp; Monte</span>
+    </a>
+    <nav class="main-nav">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="sobre.html">Sobre nós</a></li>
+        <li><a href="kits.html">Kit's</a></li>
+        <li><a href="contato.html">Contato</a></li>
+        <li><a href="duvidas.html">Dúvidas</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-ghost btn-sm" href="index.html">← Voltar ao site</a>
+      <button class="hamburger" aria-label="Abrir menu" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+  <nav class="mobile-nav">
+    <a href="index.html">Home</a>
+    <a href="sobre.html">Sobre nós</a>
+    <a href="kits.html">Kit's</a>
+    <a href="contato.html">Contato</a>
+    <a href="duvidas.html">Dúvidas</a>
+  </nav>
+</header>
+
+<main>
+  <section class="page-hero bg-lilac" style="padding:40px 0 50px;">
+    <div class="container">
+      <span class="eyebrow">👤 Área do cliente</span>
+      <h1>Minha conta</h1>
+      <p>Atualize sua foto e seus dados.</p>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <div class="auth-card" id="conta-card">
+
+        <div class="profile-avatar-edit">
+          <span class="avatar-circle" id="conta-avatar"></span>
+          <label class="edit-pin" for="conta-avatar-input" title="Trocar foto">✎</label>
+          <input type="file" id="conta-avatar-input" accept="image/*">
+        </div>
+
+        <div class="auth-error" id="conta-error"></div>
+        <div class="notice-box" id="conta-success" style="display:none; margin-bottom:18px;">Dados salvos!</div>
+
+        <form id="form-conta" class="stack">
+          <div class="field">
+            <label for="conta-nome">Nome</label>
+            <input id="conta-nome" type="text" required>
+          </div>
+          <div class="field">
+            <label for="conta-email">E-mail</label>
+            <input id="conta-email" type="email" disabled>
+          </div>
+          <div class="field">
+            <label>Tipo de conta</label>
+            <input id="conta-papel" type="text" disabled>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Salvar alterações</button>
+        </form>
+
+        <div style="margin-top:22px; display:flex; flex-direction:column; gap:10px;">
+          <a id="conta-admin-link" class="btn btn-secondary btn-block" href="admin.html" style="display:none;">🛠️ Ir para o Painel Gerente</a>
+          <button id="conta-logout" class="btn btn-ghost btn-block" type="button">Sair da conta</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom" style="border-top:none; margin-top:0; padding-top:0;">
+      <span>&copy; 2026 Mimo &amp; Monte. Todos os direitos reservados.</span>
+      <span><a href="index.html">Voltar à Home</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const session = await requireAuth();
+  if(!session) return;
+  const { user, profile } = session;
+
+  const avatarEl = document.querySelector("#conta-avatar");
+  function paintAvatar(p){
+    avatarEl.innerHTML = p?.avatar_url
+      ? `<img src="${p.avatar_url}" alt="Avatar">`
+      : `<span>${initialsFrom(p?.nome, user.email)}</span>`;
+  }
+  paintAvatar(profile);
+
+  document.querySelector("#conta-nome").value = profile?.nome || "";
+  document.querySelector("#conta-email").value = user.email;
+  document.querySelector("#conta-papel").value = profile?.role === "gerente" ? "Gerente" : "Cliente";
+  if(profile?.role === "gerente") document.querySelector("#conta-admin-link").style.display = "flex";
+
+  document.querySelector("#conta-avatar-input").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    try{
+      const url = await uploadAvatar(file);
+      paintAvatar({ avatar_url: url });
+    }catch(err){
+      alert("Não foi possível enviar a foto: " + (err.message || err));
+    }
+  });
+
+  const errorBox = document.querySelector("#conta-error");
+  const successBox = document.querySelector("#conta-success");
+
+  document.querySelector("#form-conta").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorBox.classList.remove("show");
+    successBox.style.display = "none";
+    const nome = document.querySelector("#conta-nome").value.trim();
+    const { error } = await supabaseClient.from("profiles").update({ nome }).eq("id", user.id);
+    if(error){
+      errorBox.textContent = error.message;
+      errorBox.classList.add("show");
+    } else {
+      successBox.style.display = "block";
+    }
+  });
+
+  document.querySelector("#conta-logout").addEventListener("click", signOut);
+});
+</script>
+</body>
+</html>

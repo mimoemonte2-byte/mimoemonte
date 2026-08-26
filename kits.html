@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kit's — Mimo & Monte</title>
+<meta name="description" content="Confira todos os kits Pegue e Monte da Mimo & Monte: filtre por tema, categoria e disponibilidade.">
+<link rel="icon" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img src="images/logo.png" alt="Mimo & Monte">
+      <span class="brand-name">Mimo &amp; Monte</span>
+    </a>
+    <nav class="main-nav">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="sobre.html">Sobre nós</a></li>
+        <li><a href="kits.html" class="active">Kit's</a></li>
+        <li><a href="contato.html">Contato</a></li>
+        <li><a href="duvidas.html">Dúvidas</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <div class="header-search">
+        <button class="icon-btn" id="search-toggle" aria-label="Buscar kits">🔍</button>
+        <form class="js-search-form header-search-popover" id="header-search-popover">
+          <input type="search" placeholder="Buscar por tema...">
+          <button type="submit" aria-label="Buscar">🔍</button>
+        </form>
+      </div>
+      <a class="reserva-link" href="reserva.html">📦 Minha reserva</a>
+      <a class="btn btn-primary" data-whatsapp="" href="#">Consultar disponibilidade</a>
+      <button class="hamburger" aria-label="Abrir menu" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+  <nav class="mobile-nav">
+    <form class="js-search-form mobile-search">
+      <input type="search" placeholder="Buscar por tema...">
+      <button class="btn btn-secondary btn-sm" type="submit">Ir</button>
+    </form>
+    <a href="index.html">Home</a>
+    <a href="sobre.html">Sobre nós</a>
+    <a href="kits.html" class="active">Kit's</a>
+    <a href="contato.html">Contato</a>
+    <a href="duvidas.html">Dúvidas</a>
+    <a href="reserva.html">📦 Minha reserva</a>
+    <a class="btn btn-primary btn-block" data-whatsapp="" href="#">Consultar disponibilidade</a>
+  </nav>
+</header>
+
+<main>
+
+  <section class="page-hero bg-cream">
+    <span class="confetti" style="width:14px;height:14px;background:var(--blue-vivid);top:16%;left:12%;"></span>
+    <span class="confetti sq" style="width:12px;height:12px;background:var(--coral);top:22%;right:14%;"></span>
+    <span class="confetti" style="width:10px;height:10px;background:var(--yellow-vivid);bottom:16%;left:24%;"></span>
+    <div class="container">
+      <span class="eyebrow">📦 Catálogo</span>
+      <h1>Nossos Kit's</h1>
+      <p>Escolha o tema perfeito para a sua festa. Todos os kits são para locação, com retirada e montagem por conta de quem aluga.</p>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+
+      <div class="filters-card">
+        <div class="filters-row">
+          <div class="field">
+            <label for="kit-search">Buscar</label>
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="kit-search" placeholder="Buscar pelo nome do kit...">
+            </div>
+          </div>
+          <div class="field">
+            <label for="filter-theme">Tema</label>
+            <select id="filter-theme">
+              <option value="">Todos os temas</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="filter-category">Categoria</label>
+            <select id="filter-category">
+              <option value="">Todas as categorias</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="filter-price">Faixa de preço</label>
+            <select id="filter-price">
+              <option value="">Qualquer valor</option>
+              <option value="ate-180">Até R$ 180,00</option>
+              <option value="acima-180">Acima de R$ 180,00</option>
+            </select>
+          </div>
+        </div>
+        <div class="filters-row" style="margin-top:16px; grid-template-columns: 1fr;">
+          <div class="field">
+            <label for="filter-availability">Disponibilidade</label>
+            <select id="filter-availability" style="max-width:260px;">
+              <option value="">Todos</option>
+              <option value="disponivel">Disponível</option>
+              <option value="indisponivel">Indisponível</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <p id="kits-count" style="font-weight:700; color:var(--navy-soft); margin-bottom:20px;"></p>
+
+      <div class="grid-kits" id="kits-grid"></div>
+      <div class="empty-state" id="kits-empty" style="display:none;">
+        <div style="font-size:3rem;">🔎</div>
+        <h3>Nenhum kit encontrado</h3>
+        <p>Tente ajustar a busca ou os filtros, ou fale com a gente pelo WhatsApp para conferir novidades.</p>
+        <a class="btn btn-whatsapp" data-whatsapp="" href="#">💬 Falar pelo WhatsApp</a>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="section bg-lilac">
+    <div class="container">
+      <div class="cta-whats">
+        <h2>Não encontrou o tema que procurava?</h2>
+        <p>Fale com a nossa equipe — estamos sempre preparando novos kits.</p>
+        <a class="btn btn-whatsapp" data-whatsapp="Olá! Estou procurando um tema específico de kit, vocês podem me ajudar?" href="#">💬 Falar pelo WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="images/logo.png" alt="Mimo & Monte">
+        <p>Kits de decoração Pegue e Monte para festas inesquecíveis, com praticidade, carinho e economia.</p>
+        <div class="footer-social">
+          <a data-fill="instagramUrl" href="#" aria-label="Instagram">📷</a>
+          <a data-whatsapp="" href="#" aria-label="WhatsApp">💬</a>
+        </div>
+      </div>
+      <div>
+        <h4>Navegação</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="sobre.html">Sobre nós</a></li>
+          <li><a href="kits.html">Kit's</a></li>
+          <li><a href="contato.html">Contato</a></li>
+          <li><a href="duvidas.html">Dúvidas</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Institucional</h4>
+        <ul>
+          <li><a href="reserva.html">Minha reserva</a></li>
+          <li><a href="contrato.html">Política de locação</a></li>
+          <li><a href="privacidade.html">Política de privacidade</a></li>
+          <li><a href="admin.html">Painel administrativo</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contato</h4>
+        <ul>
+          <li data-fill="telefone">[Telefone a confirmar]</li>
+          <li data-fill="email">[e-mail a confirmar]</li>
+          <li data-fill="endereco">[Endereço a confirmar]</li>
+          <li data-fill="horario">[Horário a confirmar]</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Mimo &amp; Monte. Todos os direitos reservados.</span>
+      <span><a href="privacidade.html">Política de privacidade</a> · <a href="contrato.html">Política de locação</a></span>
+    </div>
+  </div>
+</footer>
+<a class="whats-float" data-whatsapp="" href="#" aria-label="Falar no WhatsApp">💬</a>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/duvidas-widget.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

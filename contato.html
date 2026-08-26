@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contato — Mimo & Monte</title>
+<link rel="icon" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img src="images/logo.png" alt="Mimo & Monte">
+      <span class="brand-name">Mimo &amp; Monte</span>
+    </a>
+    <nav class="main-nav">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="sobre.html">Sobre nós</a></li>
+        <li><a href="kits.html">Kit's</a></li>
+        <li><a href="contato.html" class="active">Contato</a></li>
+        <li><a href="duvidas.html">Dúvidas</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <div class="header-search">
+        <button class="icon-btn" id="search-toggle" aria-label="Buscar kits">🔍</button>
+        <form class="js-search-form header-search-popover" id="header-search-popover">
+          <input type="search" placeholder="Buscar por tema...">
+          <button type="submit" aria-label="Buscar">🔍</button>
+        </form>
+      </div>
+      <a class="reserva-link" href="reserva.html">📦 Minha reserva</a>
+      <a class="btn btn-primary" data-whatsapp="" href="#">Consultar disponibilidade</a>
+      <button class="hamburger" aria-label="Abrir menu" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+  <nav class="mobile-nav">
+    <form class="js-search-form mobile-search">
+      <input type="search" placeholder="Buscar por tema...">
+      <button class="btn btn-secondary btn-sm" type="submit">Ir</button>
+    </form>
+    <a href="index.html">Home</a>
+    <a href="sobre.html">Sobre nós</a>
+    <a href="kits.html">Kit's</a>
+    <a href="contato.html" class="active">Contato</a>
+    <a href="duvidas.html">Dúvidas</a>
+    <a href="reserva.html">📦 Minha reserva</a>
+    <a class="btn btn-primary btn-block" data-whatsapp="" href="#">Consultar disponibilidade</a>
+  </nav>
+</header>
+
+<main>
+
+  <section class="page-hero bg-mint">
+    <span class="confetti" style="width:14px;height:14px;background:var(--purple-vivid);top:16%;left:12%;"></span>
+    <span class="confetti sq" style="width:12px;height:12px;background:var(--coral-dark);top:22%;right:14%;"></span>
+    <span class="confetti" style="width:10px;height:10px;background:var(--blue-vivid);bottom:16%;left:24%;"></span>
+    <div class="container">
+      <span class="eyebrow">💬 Fale com a gente</span>
+      <h1>Contato</h1>
+      <p>Estamos por aqui para tirar dúvidas, consultar disponibilidade e ajudar a escolher o kit perfeito para sua festa.</p>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <div class="two-col" style="align-items:flex-start;">
+
+        <div class="stack">
+          <div class="benefit" style="text-align:left;">
+            <span class="icon">💬</span>
+            <h3>WhatsApp</h3>
+            <p data-fill="whatsappDisplay">[WhatsApp a confirmar]</p>
+            <a class="btn btn-whatsapp btn-sm" data-whatsapp="" href="#">Falar pelo WhatsApp</a>
+          </div>
+          <div class="benefit" style="text-align:left;">
+            <span class="icon">📞</span>
+            <h3>Telefone</h3>
+            <p data-fill="telefone">[Telefone a confirmar]</p>
+          </div>
+          <div class="benefit" style="text-align:left;">
+            <span class="icon">📷</span>
+            <h3>Instagram</h3>
+            <p><a data-fill="instagram" data-fill-href="instagramUrl" href="#">[@mimoemonte — a confirmar]</a></p>
+          </div>
+          <div class="benefit" style="text-align:left;">
+            <span class="icon">✉️</span>
+            <h3>E-mail</h3>
+            <p data-fill="email">[e-mail a confirmar]</p>
+          </div>
+          <div class="benefit" style="text-align:left;">
+            <span class="icon">📍</span>
+            <h3>Endereço de retirada</h3>
+            <p data-fill="endereco">[Endereço a confirmar]</p>
+          </div>
+          <div class="benefit" style="text-align:left;">
+            <span class="icon">🕒</span>
+            <h3>Horário de atendimento</h3>
+            <p data-fill="horario">[Horário a confirmar]</p>
+          </div>
+        </div>
+
+        <div>
+          <div class="filters-card">
+            <h3>Envie uma mensagem</h3>
+            <p class="form-note" style="margin-bottom:18px;">Preencha o formulário abaixo e retornaremos o quanto antes. Para respostas mais rápidas, prefira o WhatsApp.</p>
+            <form id="contact-form" class="stack">
+              <div class="form-grid cols-2">
+                <div class="field">
+                  <label for="c-nome">Nome</label>
+                  <input type="text" id="c-nome" name="nome" required>
+                </div>
+                <div class="field">
+                  <label for="c-telefone">Telefone / WhatsApp</label>
+                  <input type="tel" id="c-telefone" name="telefone" required>
+                </div>
+              </div>
+              <div class="field">
+                <label for="c-email">E-mail</label>
+                <input type="email" id="c-email" name="email">
+              </div>
+              <div class="field">
+                <label for="c-assunto">Assunto</label>
+                <select id="c-assunto" name="assunto">
+                  <option>Consultar disponibilidade</option>
+                  <option>Dúvidas sobre um kit</option>
+                  <option>Dúvidas sobre reserva</option>
+                  <option>Outro assunto</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="c-mensagem">Mensagem</label>
+                <textarea id="c-mensagem" name="mensagem" required></textarea>
+              </div>
+              <button class="btn btn-primary btn-block" type="submit">Enviar mensagem</button>
+              <p class="form-note" id="contact-status"></p>
+            </form>
+          </div>
+
+          <div class="round-photo bg-cream" style="margin-top:26px; padding:26px; text-align:center;">
+            <h3 style="margin-bottom:8px;">🗺️ Mapa</h3>
+            <p class="form-note" data-fill="endereco">[Endereço a confirmar]</p>
+            <p class="form-note">O mapa será exibido aqui assim que o endereço de retirada for confirmado.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="images/logo.png" alt="Mimo & Monte">
+        <p>Kits de decoração Pegue e Monte para festas inesquecíveis, com praticidade, carinho e economia.</p>
+        <div class="footer-social">
+          <a data-fill="instagramUrl" href="#" aria-label="Instagram">📷</a>
+          <a data-whatsapp="" href="#" aria-label="WhatsApp">💬</a>
+        </div>
+      </div>
+      <div>
+        <h4>Navegação</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="sobre.html">Sobre nós</a></li>
+          <li><a href="kits.html">Kit's</a></li>
+          <li><a href="contato.html">Contato</a></li>
+          <li><a href="duvidas.html">Dúvidas</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Institucional</h4>
+        <ul>
+          <li><a href="reserva.html">Minha reserva</a></li>
+          <li><a href="contrato.html">Política de locação</a></li>
+          <li><a href="privacidade.html">Política de privacidade</a></li>
+          <li><a href="admin.html">Painel administrativo</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contato</h4>
+        <ul>
+          <li data-fill="telefone">[Telefone a confirmar]</li>
+          <li data-fill="email">[e-mail a confirmar]</li>
+          <li data-fill="endereco">[Endereço a confirmar]</li>
+          <li data-fill="horario">[Horário a confirmar]</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Mimo &amp; Monte. Todos os direitos reservados.</span>
+      <span><a href="privacidade.html">Política de privacidade</a> · <a href="contrato.html">Política de locação</a></span>
+    </div>
+  </div>
+</footer>
+<a class="whats-float" data-whatsapp="" href="#" aria-label="Falar no WhatsApp">💬</a>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/duvidas-widget.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("[data-fill-href]").forEach(el => {
+      el.href = SITE_CONFIG[el.getAttribute("data-fill-href")] || "#";
+    });
+    const form = document.querySelector("#contact-form");
+    const status = document.querySelector("#contact-status");
+    form?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      status.textContent = "Recebemos sua mensagem! Em breve nossa equipe entrará em contato. Para uma resposta mais rápida, fale pelo WhatsApp.";
+      form.reset();
+    });
+  });
+</script>
+</body>
+</html>
