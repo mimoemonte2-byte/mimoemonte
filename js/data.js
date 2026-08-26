@@ -7,14 +7,14 @@
 /* Placeholders de contato — SUBSTITUIR pelos dados reais antes de publicar */
 const SITE_CONFIG = {
   nomeFantasia: "Mimo & Monte",
-  whatsapp: "", // ex: "5515900000000" (apenas números, com DDI 55)
-  whatsappDisplay: "[WhatsApp a confirmar]",
-  telefone: "[Telefone a confirmar]",
-  email: "[e-mail a confirmar]",
-  instagram: "[@mimoemonte — a confirmar]",
-  instagramUrl: "#",
-  endereco: "[Endereço de retirada a confirmar]",
-  horario: "[Horário de atendimento a confirmar]",
+  whatsapp: "5515997041306", // apenas números, com DDI 55
+  whatsappDisplay: "(15) 99704-1306",
+  telefone: "(15) 99704-1306",
+  email: "mimoemonte@gmail.com",
+  instagram: "@mimoemonte",
+  instagramUrl: "https://www.instagram.com/mimoemonte/",
+  endereco: "Rua Capitão Pedro Tavares, 357 — Sorocaba/SP",
+  horario: "08h às 17h",
   cidadeReferencia: "Sorocaba/SP" // conforme foro definido em contrato
 };
 

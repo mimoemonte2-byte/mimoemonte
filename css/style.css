@@ -696,11 +696,55 @@ p{ margin: 0 0 1em; }
   z-index: 90;
   width: 58px; height: 58px;
   border-radius: 50%;
-  background: #3AA76D;
+  background: var(--white);
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 10px 26px rgba(58,167,109,.4);
   animation: pulse 2.4s ease-in-out infinite;
+  padding: 10px;
 }
+.whats-float img{ width: 100%; height: 100%; object-fit: contain; }
+.footer-social-whats img{ width: 20px; height: 20px; object-fit: contain; }
+
+/* ---------- Mini-galeria do Instagram ---------- */
+.insta-gallery{ display: flex; gap: 8px; margin: 10px 0 4px; }
+.insta-tile{
+  width: 64px; height: 64px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--purple-vivid), var(--coral-dark));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  overflow: hidden;
+  transition: transform .18s ease;
+}
+.insta-tile img{ width: 100%; height: 100%; object-fit: cover; }
+.insta-tile:hover{ transform: translateY(-3px); }
+
+/* ---------- Instagram no cabeçalho / menu mobile ---------- */
+.insta-header-link{
+  display: none;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: .88rem;
+  padding: 9px 16px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, var(--purple-vivid), var(--coral-dark));
+  color: var(--white);
+}
+.insta-header-link:hover{ filter: brightness(1.08); }
+@media (min-width: 960px){
+  .insta-header-link{ display: inline-flex; }
+}
+.mobile-insta-link{
+  display: block;
+  font-family: var(--font-title);
+  font-weight: 700;
+  padding: 12px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--navy);
+}
+.mobile-insta-link:hover{ background: var(--blue-pastel); }
 @keyframes pulse{
   0%,100%{ box-shadow: 0 10px 26px rgba(58,167,109,.4); }
   50%{ box-shadow: 0 10px 26px rgba(58,167,109,.7); }
@@ -943,5 +987,6 @@ p{ margin: 0 0 1em; }
   border-radius: var(--radius-pill);
 }
 .status-pill.pendente{ background: #FFF0D6; color: #8A5A00; }
-.status-pill.respondida{ background: var(--mint); color: #1F6B4A; }
+.status-pill.respondida, .status-pill.confirmada{ background: var(--mint); color: #1F6B4A; }
+.status-pill.cancelada{ background: #FDE8E6; color: #B3261E; }
 .admin-tabs{ display: flex; gap: 10px; margin-bottom: 26px; flex-wrap: wrap; }

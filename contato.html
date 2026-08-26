@@ -37,6 +37,7 @@
       </div>
       <a class="reserva-link" href="reserva.html">📦 Minha reserva</a>
       <a class="btn btn-primary" data-whatsapp="" href="#">Consultar disponibilidade</a>
+      <a href="#" data-fill-href="instagramUrl" target="_blank" rel="noopener" class="insta-header-link" aria-label="Instagram"><span>📸</span> <span data-fill="instagram">@mimoemonte</span></a>
       <button class="hamburger" aria-label="Abrir menu" aria-expanded="false"><span></span></button>
     </div>
   </div>
@@ -52,6 +53,7 @@
     <a href="duvidas.html">Dúvidas</a>
     <a href="reserva.html">📦 Minha reserva</a>
     <a class="btn btn-primary btn-block" data-whatsapp="" href="#">Consultar disponibilidade</a>
+    <a href="#" data-fill-href="instagramUrl" target="_blank" rel="noopener" class="mobile-insta-link">📸 <span data-fill="instagram">@mimoemonte</span></a>
   </nav>
 </header>
 
@@ -87,7 +89,13 @@
           <div class="benefit" style="text-align:left;">
             <span class="icon">📷</span>
             <h3>Instagram</h3>
-            <p><a data-fill="instagram" data-fill-href="instagramUrl" href="#">[@mimoemonte — a confirmar]</a></p>
+            <p><a data-fill="instagram" data-fill-href="instagramUrl" target="_blank" rel="noopener" href="#">[@mimoemonte — a confirmar]</a></p>
+            <div class="insta-gallery">
+              <a class="insta-tile" data-fill-href="instagramUrl" target="_blank" rel="noopener" href="#"><span>📸</span></a>
+              <a class="insta-tile" data-fill-href="instagramUrl" target="_blank" rel="noopener" href="#"><span>📸</span></a>
+              <a class="insta-tile" data-fill-href="instagramUrl" target="_blank" rel="noopener" href="#"><span>📸</span></a>
+            </div>
+            <p class="form-note">Toque para ver nossas fotos mais recentes no Instagram.</p>
           </div>
           <div class="benefit" style="text-align:left;">
             <span class="icon">✉️</span>
@@ -143,10 +151,10 @@
             </form>
           </div>
 
-          <div class="round-photo bg-cream" style="margin-top:26px; padding:26px; text-align:center;">
-            <h3 style="margin-bottom:8px;">🗺️ Mapa</h3>
-            <p class="form-note" data-fill="endereco">[Endereço a confirmar]</p>
-            <p class="form-note">O mapa será exibido aqui assim que o endereço de retirada for confirmado.</p>
+          <div class="round-photo bg-cream" style="margin-top:26px; padding:26px;">
+            <h3 style="margin-bottom:8px; text-align:center;">🗺️ Onde retirar seu kit</h3>
+            <p class="form-note" style="text-align:center; margin-bottom:14px;" data-fill="endereco">[Endereço a confirmar]</p>
+            <iframe id="mapa-embed" width="100%" height="260" style="border:0; border-radius:var(--radius-md); display:block;" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Localização Mimo & Monte"></iframe>
           </div>
         </div>
 
@@ -164,7 +172,7 @@
         <p>Kits de decoração Pegue e Monte para festas inesquecíveis, com praticidade, carinho e economia.</p>
         <div class="footer-social">
           <a data-fill="instagramUrl" href="#" aria-label="Instagram">📷</a>
-          <a data-whatsapp="" href="#" aria-label="WhatsApp">💬</a>
+          <a class="footer-social-whats" data-whatsapp="" href="#" aria-label="WhatsApp"><img src="images/whatsapp-icon.png" alt="WhatsApp"></a>
         </div>
       </div>
       <div>
@@ -189,6 +197,7 @@
       <div>
         <h4>Contato</h4>
         <ul>
+          <li><a href="#" data-fill-href="instagramUrl" target="_blank" rel="noopener"><span data-fill="instagram">@mimoemonte</span></a></li>
           <li data-fill="telefone">[Telefone a confirmar]</li>
           <li data-fill="email">[e-mail a confirmar]</li>
           <li data-fill="endereco">[Endereço a confirmar]</li>
@@ -202,7 +211,7 @@
     </div>
   </div>
 </footer>
-<a class="whats-float" data-whatsapp="" href="#" aria-label="Falar no WhatsApp">💬</a>
+<a class="whats-float" data-whatsapp="" href="#" aria-label="Falar no WhatsApp"><img src="images/whatsapp-icon.png" alt="WhatsApp"></a>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
@@ -215,6 +224,13 @@
     document.querySelectorAll("[data-fill-href]").forEach(el => {
       el.href = SITE_CONFIG[el.getAttribute("data-fill-href")] || "#";
     });
+
+    const mapaEl = document.querySelector("#mapa-embed");
+    if(mapaEl){
+      const enderecoMapa = "Rua Capitão Pedro Tavares, 357, Sorocaba - SP";
+      mapaEl.src = "https://www.google.com/maps?q=" + encodeURIComponent(enderecoMapa) + "&output=embed";
+    }
+
     const form = document.querySelector("#contact-form");
     const status = document.querySelector("#contact-status");
     form?.addEventListener("submit", (e) => {

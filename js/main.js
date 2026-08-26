@@ -55,6 +55,7 @@ function initWhatsappLinks(){
   document.querySelectorAll("[data-fill='endereco']").forEach(el => el.textContent = SITE_CONFIG.endereco);
   document.querySelectorAll("[data-fill='horario']").forEach(el => el.textContent = SITE_CONFIG.horario);
   document.querySelectorAll("[data-fill='instagramUrl']").forEach(el => el.href = SITE_CONFIG.instagramUrl);
+  document.querySelectorAll("[data-fill-href]").forEach(el => el.href = SITE_CONFIG[el.getAttribute("data-fill-href")] || "#");
 }
 
 /* ---------- Acordeão (Dúvidas) ---------- */

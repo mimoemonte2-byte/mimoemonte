@@ -37,6 +37,7 @@
       </div>
       <a class="reserva-link" href="reserva.html" style="background:var(--yellow-pastel);">📦 Minha reserva</a>
       <a class="btn btn-primary" data-whatsapp="" href="#">Consultar disponibilidade</a>
+      <a href="#" data-fill-href="instagramUrl" target="_blank" rel="noopener" class="insta-header-link" aria-label="Instagram"><span>📸</span> <span data-fill="instagram">@mimoemonte</span></a>
       <button class="hamburger" aria-label="Abrir menu" aria-expanded="false"><span></span></button>
     </div>
   </div>
@@ -52,6 +53,7 @@
     <a href="duvidas.html">Dúvidas</a>
     <a href="reserva.html">📦 Minha reserva</a>
     <a class="btn btn-primary btn-block" data-whatsapp="" href="#">Consultar disponibilidade</a>
+    <a href="#" data-fill-href="instagramUrl" target="_blank" rel="noopener" class="mobile-insta-link">📸 <span data-fill="instagram">@mimoemonte</span></a>
   </nav>
 </header>
 
@@ -140,7 +142,7 @@
         <p>Kits de decoração Pegue e Monte para festas inesquecíveis, com praticidade, carinho e economia.</p>
         <div class="footer-social">
           <a data-fill="instagramUrl" href="#" aria-label="Instagram">📷</a>
-          <a data-whatsapp="" href="#" aria-label="WhatsApp">💬</a>
+          <a class="footer-social-whats" data-whatsapp="" href="#" aria-label="WhatsApp"><img src="images/whatsapp-icon.png" alt="WhatsApp"></a>
         </div>
       </div>
       <div>
@@ -165,6 +167,7 @@
       <div>
         <h4>Contato</h4>
         <ul>
+          <li><a href="#" data-fill-href="instagramUrl" target="_blank" rel="noopener"><span data-fill="instagram">@mimoemonte</span></a></li>
           <li data-fill="telefone">[Telefone a confirmar]</li>
           <li data-fill="email">[e-mail a confirmar]</li>
           <li data-fill="endereco">[Endereço a confirmar]</li>
@@ -178,7 +181,7 @@
     </div>
   </div>
 </footer>
-<a class="whats-float" data-whatsapp="" href="#" aria-label="Falar no WhatsApp">💬</a>
+<a class="whats-float" data-whatsapp="" href="#" aria-label="Falar no WhatsApp"><img src="images/whatsapp-icon.png" alt="WhatsApp"></a>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
@@ -187,9 +190,10 @@
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", async () => {
     const select = document.querySelector("#r-kit");
-    KITS.forEach(k => {
+    const allKits = await loadKits();
+    allKits.forEach(k => {
       const opt = document.createElement("option");
       opt.value = k.id; opt.textContent = k.title;
       select.appendChild(opt);
@@ -197,14 +201,35 @@
     const params = new URLSearchParams(location.search);
     if(params.get("id")) select.value = params.get("id");
 
-    document.querySelector("#reserva-form").addEventListener("submit", (e) => {
+    document.querySelector("#reserva-form").addEventListener("submit", async (e) => {
       e.preventDefault();
+      const submitBtn = e.target.querySelector("button[type='submit']");
       const nome = document.querySelector("#r-nome").value;
       const telefone = document.querySelector("#r-telefone").value;
-      const kit = KITS.find(k => k.id === select.value);
+      const kit = allKits.find(k => k.id === select.value);
       const retirada = document.querySelector("#r-retirada").value;
       const devolucao = document.querySelector("#r-devolucao").value;
       const obs = document.querySelector("#r-obs").value;
+
+      if(supabaseClient){
+        submitBtn.disabled = true;
+        try{
+          const user = await getCurrentUser();
+          await supabaseClient.from("reservas").insert({
+            user_id: user ? user.id : null,
+            nome, telefone,
+            kit_id: kit ? kit.id : null,
+            kit_title: kit ? kit.title : null,
+            data_retirada: retirada || null,
+            data_devolucao: devolucao || null,
+            observacoes: obs || null
+          });
+        }catch(err){
+          console.warn("Não foi possível salvar o pedido no painel Gerente, mas o WhatsApp será aberto normalmente.", err);
+        }finally{
+          submitBtn.disabled = false;
+        }
+      }
 
       let msg = `Olá! Gostaria de consultar disponibilidade para reserva.\n`;
       msg += `Nome: ${nome}\nTelefone: ${telefone}\nKit: ${kit ? kit.title : ""}\n`;

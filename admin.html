@@ -58,6 +58,7 @@
 
         <div class="admin-tabs">
           <button type="button" class="btn btn-secondary btn-sm admin-tab-btn active" data-panel="painel-kits">📦 Kits</button>
+          <button type="button" class="btn btn-ghost btn-sm admin-tab-btn" data-panel="painel-reservas">🗓️ Pedidos de aluguel <span id="reservas-pendentes-badge"></span></button>
           <button type="button" class="btn btn-ghost btn-sm admin-tab-btn" data-panel="painel-duvidas">💬 Dúvidas recebidas <span id="duvidas-pendentes-badge"></span></button>
         </div>
 
@@ -81,6 +82,31 @@
                 </tr>
               </thead>
               <tbody id="admin-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ===================== PEDIDOS DE ALUGUEL ===================== -->
+        <div id="painel-reservas" class="admin-panel">
+          <div class="notice-box" style="margin-bottom:20px;">
+            Pedidos enviados pelo formulário "Minha reserva". Confirme a disponibilidade com o cliente pelo WhatsApp/telefone e atualize o status aqui.
+          </div>
+          <div class="table-scroll">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Quando</th>
+                  <th>Nome</th>
+                  <th>Contato</th>
+                  <th>Kit</th>
+                  <th>Retirada</th>
+                  <th>Devolução</th>
+                  <th>Obs.</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="reservas-tbody"></tbody>
             </table>
           </div>
         </div>
@@ -339,6 +365,69 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   await renderDuvidas();
+
+  /* ============================================================
+     PEDIDOS DE ALUGUEL (reservas)
+     ============================================================ */
+  const reservasTbody = document.querySelector("#reservas-tbody");
+  const reservasBadge = document.querySelector("#reservas-pendentes-badge");
+
+  function formatDateOnly(d){
+    if(!d) return "—";
+    const [ano, mes, dia] = d.split("-");
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  async function renderReservas(){
+    const { data, error } = await supabaseClient.from("reservas").select("*").order("created_at", { ascending: false });
+    if(error){ reservasTbody.innerHTML = `<tr><td colspan="9">Erro ao carregar: ${error.message}</td></tr>`; return; }
+
+    const pendentes = data.filter(r => r.status === "pendente").length;
+    reservasBadge.textContent = pendentes ? `(${pendentes})` : "";
+
+    if(!data.length){
+      reservasTbody.innerHTML = `<tr><td colspan="9" style="padding:20px; color:var(--navy-soft);">Nenhum pedido de aluguel recebido ainda.</td></tr>`;
+      return;
+    }
+
+    const statusLabel = { pendente: "Pendente", confirmada: "Confirmada", cancelada: "Cancelada" };
+
+    reservasTbody.innerHTML = data.map(r => `
+      <tr class="admin-row" data-id="${r.id}">
+        <td>${formatDate(r.created_at)}</td>
+        <td>${r.nome || "—"}</td>
+        <td>${r.telefone || "—"}</td>
+        <td style="max-width:200px;">${r.kit_title || "—"}</td>
+        <td>${formatDateOnly(r.data_retirada)}</td>
+        <td>${formatDateOnly(r.data_devolucao)}</td>
+        <td style="max-width:200px; white-space:pre-wrap;">${(r.observacoes || "—").toString().replace(/</g, "&lt;")}</td>
+        <td><span class="status-pill ${r.status}">${statusLabel[r.status] || r.status}</span></td>
+        <td class="admin-actions-cell">
+          ${r.status !== "confirmada" ? `<button class="btn btn-primary btn-sm js-confirmar">Confirmar</button>` : ""}
+          ${r.status !== "cancelada" ? `<button class="btn btn-ghost btn-sm js-cancelar">Cancelar</button>` : ""}
+        </td>
+      </tr>
+    `).join("");
+
+    reservasTbody.querySelectorAll(".js-confirmar").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const id = btn.closest(".admin-row").dataset.id;
+        const { error } = await supabaseClient.from("reservas").update({ status: "confirmada" }).eq("id", id);
+        if(error){ alert("Erro: " + error.message); return; }
+        renderReservas();
+      });
+    });
+    reservasTbody.querySelectorAll(".js-cancelar").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const id = btn.closest(".admin-row").dataset.id;
+        const { error } = await supabaseClient.from("reservas").update({ status: "cancelada" }).eq("id", id);
+        if(error){ alert("Erro: " + error.message); return; }
+        renderReservas();
+      });
+    });
+  }
+
+  await renderReservas();
 });
 </script>
 </body>

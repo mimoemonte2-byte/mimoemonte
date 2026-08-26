@@ -153,6 +153,35 @@ drop policy if exists "duvidas_update_gerente" on public.duvidas;
 create policy "duvidas_update_gerente" on public.duvidas for update using (public.is_gerente());
 
 -- ---------------------------------------------------------
+-- 3b) RESERVAS (pedidos de aluguel enviados pelo formulário)
+-- ---------------------------------------------------------
+create table if not exists public.reservas (
+  id bigint generated always as identity primary key,
+  user_id uuid references auth.users(id) on delete set null,
+  nome text not null,
+  telefone text not null,
+  kit_id text references public.kits(id) on delete set null,
+  kit_title text,
+  data_retirada date,
+  data_devolucao date,
+  observacoes text,
+  status text not null default 'pendente' check (status in ('pendente','confirmada','cancelada')),
+  created_at timestamptz not null default now()
+);
+
+alter table public.reservas enable row level security;
+
+drop policy if exists "reservas_insert_all" on public.reservas;
+create policy "reservas_insert_all" on public.reservas for insert with check (true);
+
+drop policy if exists "reservas_select_own_or_gerente" on public.reservas;
+create policy "reservas_select_own_or_gerente" on public.reservas
+  for select using (auth.uid() = user_id or public.is_gerente());
+
+drop policy if exists "reservas_update_gerente" on public.reservas;
+create policy "reservas_update_gerente" on public.reservas for update using (public.is_gerente());
+
+-- ---------------------------------------------------------
 -- 4) STORAGE (fotos dos kits e avatares dos usuários)
 -- ---------------------------------------------------------
 insert into storage.buckets (id, name, public)
