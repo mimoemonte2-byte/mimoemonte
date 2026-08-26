@@ -84,6 +84,17 @@
               </div>
             </div>
             <button type="submit" class="btn btn-primary btn-block">Acessar minha conta</button>
+            <p class="form-note" style="text-align:center;"><a href="#" id="esqueci-senha-link">Esqueci minha senha</a></p>
+          </form>
+
+          <form id="form-recuperar" class="auth-form">
+            <p class="form-note" style="margin-top:0;">Digite o e-mail da sua conta — vamos enviar um link para você criar uma nova senha.</p>
+            <div class="field">
+              <label for="recuperar-email">E-mail</label>
+              <input id="recuperar-email" type="email" required autocomplete="email">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Enviar link de redefinição</button>
+            <p class="form-note" style="text-align:center;"><a href="#" id="voltar-login-link">← Voltar para login</a></p>
           </form>
 
           <form id="form-cadastrar" class="auth-form">
@@ -145,17 +156,29 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const tabs = document.querySelectorAll(".auth-tab");
-  const forms = { entrar: document.querySelector("#form-entrar"), cadastrar: document.querySelector("#form-cadastrar") };
+  const forms = { entrar: document.querySelector("#form-entrar"), cadastrar: document.querySelector("#form-cadastrar"), recuperar: document.querySelector("#form-recuperar") };
   const errorBox = document.querySelector("#auth-error");
 
+  function showForm(name){
+    tabs.forEach(t => t.classList.remove("active"));
+    const matchingTab = [...tabs].find(t => t.dataset.tab === name);
+    if(matchingTab) matchingTab.classList.add("active");
+    Object.values(forms).forEach(f => f.classList.remove("active"));
+    forms[name].classList.add("active");
+    errorBox.classList.remove("show");
+  }
+
   tabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      tabs.forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-      Object.values(forms).forEach(f => f.classList.remove("active"));
-      forms[tab.dataset.tab].classList.add("active");
-      errorBox.classList.remove("show");
-    });
+    tab.addEventListener("click", () => showForm(tab.dataset.tab));
+  });
+
+  document.querySelector("#esqueci-senha-link").addEventListener("click", (e) => {
+    e.preventDefault();
+    showForm("recuperar");
+  });
+  document.querySelector("#voltar-login-link").addEventListener("click", (e) => {
+    e.preventDefault();
+    showForm("entrar");
   });
 
   function showError(err){
@@ -176,6 +199,29 @@ document.addEventListener("DOMContentLoaded", () => {
       await signIn(document.querySelector("#entrar-email").value.trim(), document.querySelector("#entrar-senha").value);
       redirectAfterLogin();
     }catch(err){ showError(err); }
+  });
+
+  forms.recuperar.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorBox.classList.remove("show");
+    const btn = forms.recuperar.querySelector("button[type='submit']");
+    btn.disabled = true; btn.textContent = "Enviando...";
+    try{
+      const email = document.querySelector("#recuperar-email").value.trim();
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + "/redefinir-senha.html"
+      });
+      if(error) throw error;
+      errorBox.textContent = "Enviamos um link para " + email + ". Verifique sua caixa de entrada (e o spam) para criar a nova senha.";
+      errorBox.classList.add("show");
+      errorBox.style.background = "#E3F6EA";
+      errorBox.style.color = "#1F6B4A";
+      forms.recuperar.reset();
+    }catch(err){
+      showError(err);
+    }finally{
+      btn.disabled = false; btn.textContent = "Enviar link de redefinição";
+    }
   });
 
   forms.cadastrar.addEventListener("submit", async (e) => {

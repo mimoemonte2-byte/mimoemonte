@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redefinir senha — Mimo & Monte</title>
+<link rel="icon" href="images/logo.png">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img src="images/logo.png" alt="Mimo & Monte">
+      <span class="brand-name">Mimo &amp; Monte</span>
+    </a>
+    <nav class="main-nav">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="sobre.html">Sobre nós</a></li>
+        <li><a href="kits.html">Kit's</a></li>
+        <li><a href="contato.html">Contato</a></li>
+        <li><a href="duvidas.html">Dúvidas</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-ghost btn-sm" href="index.html">← Voltar ao site</a>
+      <button class="hamburger" aria-label="Abrir menu" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+  <nav class="mobile-nav">
+    <a href="index.html">Home</a>
+    <a href="sobre.html">Sobre nós</a>
+    <a href="kits.html">Kit's</a>
+    <a href="contato.html">Contato</a>
+    <a href="duvidas.html">Dúvidas</a>
+  </nav>
+</header>
+
+<main>
+  <section class="page-hero bg-lilac">
+    <div class="container">
+      <span class="eyebrow">🔐 Nova senha</span>
+      <h1>Criar uma nova senha</h1>
+      <p>Escolha a nova senha da sua conta.</p>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <div class="auth-card">
+
+        <div id="redefinir-status" class="notice-box" style="display:none; margin-bottom:20px;"></div>
+
+        <form id="form-redefinir" class="stack">
+          <div class="field">
+            <label for="nova-senha">Nova senha</label>
+            <div class="password-field">
+              <input id="nova-senha" type="password" required minlength="6" autocomplete="new-password">
+              <label class="password-toggle">
+                <input type="checkbox" class="js-toggle-senha" data-target="nova-senha">
+                <span>Mostrar senha</span>
+              </label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Salvar nova senha</button>
+        </form>
+
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom" style="border-top:none; margin-top:0; padding-top:0;">
+      <span>&copy; 2026 Mimo &amp; Monte. Todos os direitos reservados.</span>
+      <span><a href="login.html">Voltar ao login</a></span>
+    </div>
+  </div>
+  <div class="footer-credit">Criado por Fabiano Galego</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  document.querySelectorAll(".js-toggle-senha").forEach(checkbox => {
+    checkbox.addEventListener("change", () => {
+      const input = document.querySelector("#" + checkbox.dataset.target);
+      if(input) input.type = checkbox.checked ? "text" : "password";
+    });
+  });
+
+  const status = document.querySelector("#redefinir-status");
+  const form = document.querySelector("#form-redefinir");
+
+  function showStatus(msg, ok){
+    status.textContent = msg;
+    status.style.display = "block";
+    status.style.background = ok ? "#E3F6EA" : "#FDE8E6";
+    status.style.color = ok ? "#1F6B4A" : "#B3261E";
+    status.style.border = "none";
+  }
+
+  if(!supabaseClient){
+    showStatus("O login ainda não foi configurado neste site.", false);
+    form.style.display = "none";
+    return;
+  }
+
+  // O link do e-mail traz um token de recuperação na URL; o Supabase já
+  // cria a sessão temporária sozinho ao carregar a página.
+  const { data } = await supabaseClient.auth.getSession();
+  if(!data.session){
+    showStatus("Este link é inválido ou já expirou. Solicite um novo em \"Esqueci minha senha\", na tela de login.", false);
+    form.style.display = "none";
+    return;
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector("button[type='submit']");
+    btn.disabled = true; btn.textContent = "Salvando...";
+    try{
+      const novaSenha = document.querySelector("#nova-senha").value;
+      const { error } = await supabaseClient.auth.updateUser({ password: novaSenha });
+      if(error) throw error;
+      showStatus("Senha alterada com sucesso! Redirecionando para o login...", true);
+      form.style.display = "none";
+      setTimeout(() => { window.location.href = "login.html"; }, 2200);
+    }catch(err){
+      showStatus(err.message || "Não foi possível salvar a nova senha.", false);
+      btn.disabled = false; btn.textContent = "Salvar nova senha";
+    }
+  });
+});
+</script>
+</body>
+</html>
