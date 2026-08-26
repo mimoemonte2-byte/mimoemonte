@@ -338,6 +338,11 @@ function openLightbox(photos, startIndex){
     lightbox.addEventListener("click", (e) => { if(e.target === lightbox) closeLightbox(); });
     lightbox.querySelector(".prev").addEventListener("click", () => showLightboxPhoto(-1));
     lightbox.querySelector(".next").addEventListener("click", () => showLightboxPhoto(1));
+    lightbox.querySelector(".mimo-lightbox-img").addEventListener("click", (e) => {
+      e.stopPropagation();
+      const zoomed = e.currentTarget.classList.toggle("zoomed");
+      lightbox.classList.toggle("zoomed-mode", zoomed);
+    });
     document.addEventListener("keydown", (e) => {
       if(!lightbox.classList.contains("open")) return;
       if(e.key === "Escape") closeLightbox();
@@ -346,11 +351,18 @@ function openLightbox(photos, startIndex){
     });
   }
 
+  function resetZoom(){
+    lightbox.querySelector(".mimo-lightbox-img").classList.remove("zoomed");
+    lightbox.classList.remove("zoomed-mode");
+  }
+
   function showLightboxPhoto(delta){
     index = (index + delta + photos.length) % photos.length;
     lightbox.querySelector(".mimo-lightbox-img").src = photos[index];
+    resetZoom();
   }
 
+  resetZoom();
   lightbox.querySelectorAll(".mimo-lightbox-nav").forEach(btn => {
     btn.style.display = photos.length > 1 ? "flex" : "none";
   });

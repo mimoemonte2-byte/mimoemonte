@@ -820,14 +820,26 @@ p{ margin: 0 0 1em; }
   display: none;
   align-items: center;
   justify-content: center;
+  overflow: auto;
 }
 .mimo-lightbox.open{ display: flex; }
+.mimo-lightbox.zoomed-mode{ align-items: flex-start; justify-content: flex-start; padding: 20px; }
 .mimo-lightbox-img{
   max-width: min(92vw, 1000px);
   max-height: 88vh;
   object-fit: contain;
   border-radius: var(--radius-sm);
   box-shadow: 0 20px 60px rgba(0,0,0,.5);
+  cursor: zoom-in;
+  margin: auto;
+}
+.mimo-lightbox-img.zoomed{
+  max-width: none;
+  max-height: none;
+  width: auto;
+  height: auto;
+  cursor: zoom-out;
+  margin: 0;
 }
 .mimo-lightbox-close{
   position: absolute;
