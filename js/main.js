@@ -318,9 +318,25 @@ function initKitGallery(photos){
   mainImg.addEventListener("click", () => openLightbox(photos, Number(mainImg.dataset.index) || 0));
 }
 
-/* ---------- Lightbox (zoom da foto) — reutilizável em qualquer página ---------- */
+/* ---------- Lightbox (zoom da foto) — reutilizável em qualquer página ----------
+   Estado (fotos/índice) fica salvo no próprio elemento do lightbox, não em
+   variáveis fechadas por closure, pra não "grudar" num índice antigo quando
+   a galeria é aberta mais de uma vez na mesma página. ---------- */
+function resetLightboxZoom(lightbox){
+  lightbox.querySelector(".mimo-lightbox-img").classList.remove("zoomed");
+  lightbox.classList.remove("zoomed-mode");
+}
+
+function navigateLightbox(delta){
+  const lightbox = document.querySelector("#mimo-lightbox");
+  const photos = lightbox?._photos || [];
+  if(!lightbox || !photos.length) return;
+  lightbox._index = (lightbox._index + delta + photos.length) % photos.length;
+  lightbox.querySelector(".mimo-lightbox-img").src = photos[lightbox._index];
+  resetLightboxZoom(lightbox);
+}
+
 function openLightbox(photos, startIndex){
-  let index = startIndex || 0;
   let lightbox = document.querySelector("#mimo-lightbox");
   if(!lightbox){
     lightbox = document.createElement("div");
@@ -336,8 +352,8 @@ function openLightbox(photos, startIndex){
 
     lightbox.querySelector(".mimo-lightbox-close").addEventListener("click", closeLightbox);
     lightbox.addEventListener("click", (e) => { if(e.target === lightbox) closeLightbox(); });
-    lightbox.querySelector(".prev").addEventListener("click", () => showLightboxPhoto(-1));
-    lightbox.querySelector(".next").addEventListener("click", () => showLightboxPhoto(1));
+    lightbox.querySelector(".prev").addEventListener("click", () => navigateLightbox(-1));
+    lightbox.querySelector(".next").addEventListener("click", () => navigateLightbox(1));
     lightbox.querySelector(".mimo-lightbox-img").addEventListener("click", (e) => {
       e.stopPropagation();
       const zoomed = e.currentTarget.classList.toggle("zoomed");
@@ -346,27 +362,19 @@ function openLightbox(photos, startIndex){
     document.addEventListener("keydown", (e) => {
       if(!lightbox.classList.contains("open")) return;
       if(e.key === "Escape") closeLightbox();
-      if(e.key === "ArrowLeft") showLightboxPhoto(-1);
-      if(e.key === "ArrowRight") showLightboxPhoto(1);
+      if(e.key === "ArrowLeft") navigateLightbox(-1);
+      if(e.key === "ArrowRight") navigateLightbox(1);
     });
   }
 
-  function resetZoom(){
-    lightbox.querySelector(".mimo-lightbox-img").classList.remove("zoomed");
-    lightbox.classList.remove("zoomed-mode");
-  }
+  lightbox._photos = photos;
+  lightbox._index = startIndex || 0;
 
-  function showLightboxPhoto(delta){
-    index = (index + delta + photos.length) % photos.length;
-    lightbox.querySelector(".mimo-lightbox-img").src = photos[index];
-    resetZoom();
-  }
-
-  resetZoom();
+  resetLightboxZoom(lightbox);
   lightbox.querySelectorAll(".mimo-lightbox-nav").forEach(btn => {
     btn.style.display = photos.length > 1 ? "flex" : "none";
   });
-  lightbox.querySelector(".mimo-lightbox-img").src = photos[index];
+  lightbox.querySelector(".mimo-lightbox-img").src = photos[lightbox._index];
   lightbox.classList.add("open");
   document.body.style.overflow = "hidden";
 }

@@ -604,7 +604,7 @@ p{ margin: 0 0 1em; }
 /* ---------- Forms ---------- */
 .form-grid{ display: grid; gap: 18px; grid-template-columns: 1fr; }
 @media (min-width: 640px){ .form-grid.cols-2{ grid-template-columns: 1fr 1fr; } }
-.field{ display: flex; flex-direction: column; gap: 6px; }
+.field{ display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .field label{ font-weight: 700; font-size: .9rem; color: var(--navy); }
 .field input, .field select, .field textarea{
   border: 2px solid #E4E9F2;
@@ -614,6 +614,8 @@ p{ margin: 0 0 1em; }
   font-size: 1rem;
   background: var(--white);
   color: var(--navy);
+  width: 100%;
+  min-width: 0;
 }
 .field input:focus, .field select:focus, .field textarea:focus{
   outline: none;
