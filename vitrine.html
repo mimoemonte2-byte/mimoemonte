@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="/">
+<title>Vitrine 3D de Kits — Mimo & Monte</title>
+<meta name="description" content="Explore em 3D os temas de kits Pegue e Monte da Mimo & Monte: gire os cenários, veja painel, cilindros, mesa e acessórios e consulte a disponibilidade.">
+<link rel="icon" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/vitrine.css">
+<link rel="modulepreload" href="js/vitrine/app.js">
+</head>
+<body class="vt-page">
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img src="images/logo.png" alt="Mimo & Monte">
+      <span class="brand-name">Mimo &amp; Monte</span>
+    </a>
+    <nav class="main-nav">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="sobre.html">Sobre nós</a></li>
+        <li><a href="kits.html">Kit's</a></li>
+        <li><a href="vitrine.html" class="active">Vitrine 3D</a></li>
+        <li><a href="contato.html">Contato</a></li>
+        <li><a href="duvidas.html">Dúvidas</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <div class="header-search">
+        <button class="icon-btn" id="search-toggle" aria-label="Buscar kits">🔍</button>
+        <form class="js-search-form header-search-popover" id="header-search-popover">
+          <input type="search" placeholder="Buscar por tema...">
+          <button type="submit" aria-label="Buscar">🔍</button>
+        </form>
+      </div>
+      <a class="reserva-link" href="reserva.html">📦 Minha reserva</a>
+      <a class="btn btn-primary" data-whatsapp="" href="#">Consultar disponibilidade</a>
+      <a href="#" data-fill-href="instagramUrl" target="_blank" rel="noopener" class="insta-header-link" aria-label="Instagram"><span>📸</span> <span data-fill="instagram">@mimoemonte</span></a>
+      <button class="hamburger" aria-label="Abrir menu" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+  <nav class="mobile-nav">
+    <form class="js-search-form mobile-search">
+      <input type="search" placeholder="Buscar por tema...">
+      <button class="btn btn-secondary btn-sm" type="submit">Ir</button>
+    </form>
+    <a href="index.html">Home</a>
+    <a href="sobre.html">Sobre nós</a>
+    <a href="kits.html">Kit's</a>
+    <a href="vitrine.html" class="active">Vitrine 3D</a>
+    <a href="contato.html">Contato</a>
+    <a href="duvidas.html">Dúvidas</a>
+    <a href="reserva.html">📦 Minha reserva</a>
+    <a class="btn btn-primary btn-block" data-whatsapp="" href="#">Consultar disponibilidade</a>
+    <a href="#" data-fill-href="instagramUrl" target="_blank" rel="noopener" class="mobile-insta-link">📸 <span data-fill="instagram">@mimoemonte</span></a>
+  </nav>
+</header>
+
+<main id="vt-main">
+
+  <!-- ============ GALERIA ============ -->
+  <section id="vt-gallery-view" class="vt-gallery-view" aria-labelledby="vt-heading">
+    <div class="container vt-intro">
+      <span class="eyebrow">✨ Vitrine 3D</span>
+      <h1 id="vt-heading">Escolha o cenário da festa</h1>
+      <p>Passeie pelos temas como se estivesse na nossa loja: arraste, deslize ou use as setas para trazer cada kit para a frente.</p>
+
+      <div class="vt-toolbar">
+        <div class="vt-segment" role="group" aria-label="Filtrar temas" id="vt-filters">
+          <button type="button" data-filter="todos" aria-pressed="true">Todos</button>
+          <button type="button" data-filter="meninos" aria-pressed="false">Meninos</button>
+          <button type="button" data-filter="meninas" aria-pressed="false">Meninas</button>
+        </div>
+        <div class="vt-segment vt-segment--mode" role="group" aria-label="Forma de visualização" id="vt-modes">
+          <button type="button" data-mode="gallery" aria-pressed="true">🎠 Galeria 3D</button>
+          <button type="button" data-mode="list" aria-pressed="false">☰ Lista</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="vt-gallery-block">
+      <div class="vt-stage" id="vt-stage" tabindex="0" role="region" aria-roledescription="carrossel"
+           aria-label="Galeria de cenários. Use as setas esquerda e direita para navegar e Enter para explorar o kit.">
+        <div class="vt-flow" id="vt-flow" aria-hidden="true"></div>
+        <div class="vt-canvas-host" id="vt-canvas-host" aria-hidden="true"></div>
+        <div class="vt-loading" id="vt-loading" role="status"><span class="vt-spinner" aria-hidden="true"></span> Preparando os cenários 3D…</div>
+        <button type="button" class="vt-nav vt-nav--prev" id="vt-prev" aria-label="Kit anterior"><span aria-hidden="true">‹</span></button>
+        <button type="button" class="vt-nav vt-nav--next" id="vt-next" aria-label="Próximo kit"><span aria-hidden="true">›</span></button>
+        <span class="vt-stage-tag" id="vt-stage-tag">Prévia 3D</span>
+      </div>
+
+      <div class="container">
+        <div class="vt-info" id="vt-info">
+          <div class="vt-info-meta">
+            <span class="vt-aud" id="vt-aud"></span>
+            <span class="vt-badges" id="vt-badges"></span>
+          </div>
+          <h2 class="vt-title" id="vt-title">&nbsp;</h2>
+          <p class="vt-desc" id="vt-desc">&nbsp;</p>
+          <div class="vt-info-actions">
+            <a class="btn btn-primary" id="vt-explore" href="vitrine.html">Explorar kit</a>
+            <a class="btn btn-ghost" id="vt-consult" data-whatsapp="" href="#">💬 Consultar</a>
+          </div>
+          <div class="vt-pager">
+            <span class="vt-pos" id="vt-pos" aria-hidden="true"></span>
+            <div class="vt-dots" id="vt-dots" role="group" aria-label="Ir direto para um kit"></div>
+          </div>
+          <p class="vt-hint" id="vt-hint">Arraste ou deslize para os lados · toque em um kit vizinho para trazê-lo à frente</p>
+          <p class="sr-only" id="vt-status" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="vt-list" id="vt-list" hidden></div>
+
+      <div class="vt-notice notice-box">
+        <strong>Sobre a Prévia 3D:</strong> os cenários são ilustrações para inspirar a escolha do tema. Itens, medidas e valores valem apenas quando aparecem como <em>confirmados no acervo</em> na página de cada kit. Temas marcados como <em>Sob consulta</em> são confirmados pela nossa equipe no atendimento.
+        <a href="kits.html">Ver o catálogo completo de kits →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PÁGINA DO TEMA ============ -->
+  <section id="vt-theme-view" class="vt-theme-view" hidden aria-live="off"></section>
+
+  <noscript>
+    <div class="container section"><p>A Vitrine 3D precisa de JavaScript. Veja todos os kits no <a href="kits.html">catálogo</a> ou fale com a gente pelo WhatsApp (15) 99704-1306.</p></div>
+  </noscript>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="images/logo.png" alt="Mimo & Monte">
+        <p>Kits de decoração Pegue e Monte para festas inesquecíveis, com praticidade, carinho e economia.</p>
+        <div class="footer-social">
+          <a data-fill="instagramUrl" href="#" aria-label="Instagram" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.2" cy="6.8" r="1.1" fill="white" stroke="none"/></svg></a>
+          <a class="footer-social-whats" data-whatsapp="" href="#" aria-label="WhatsApp" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.06-1.33A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm5.2 14.2c-.22.62-1.28 1.2-1.77 1.24-.45.04-1 .06-1.62-.1-.37-.1-.85-.27-1.46-.53-2.58-1.11-4.26-3.7-4.39-3.87-.13-.17-1.05-1.39-1.05-2.66s.67-1.89.9-2.14c.23-.25.5-.32.67-.32h.48c.15 0 .36-.06.56.43.22.53.73 1.83.8 1.96.06.13.1.29.02.46-.08.17-.13.28-.25.43-.13.15-.27.34-.38.46-.13.13-.27.28-.12.55.15.27.68 1.12 1.46 1.82 1 .9 1.85 1.18 2.12 1.31.27.13.43.11.59-.07.17-.18.68-.79.86-1.06.18-.27.36-.22.6-.13.24.09 1.55.73 1.82.86.27.13.45.2.51.31.07.11.07.63-.15 1.25z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4>Navegação</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="sobre.html">Sobre nós</a></li>
+          <li><a href="kits.html">Kit's</a></li>
+          <li><a href="vitrine.html">Vitrine 3D</a></li>
+          <li><a href="contato.html">Contato</a></li>
+          <li><a href="duvidas.html">Dúvidas</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Institucional</h4>
+        <ul>
+          <li><a href="reserva.html">Minha reserva</a></li>
+          <li><a href="contrato.html">Política de locação</a></li>
+          <li><a href="privacidade.html">Política de privacidade</a></li>
+          <li><a href="admin.html">Painel administrativo</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contato</h4>
+        <ul>
+          <li><a href="#" data-fill-href="instagramUrl" target="_blank" rel="noopener"><span data-fill="instagram">@mimoemonte</span></a></li>
+          <li data-fill="telefone">[Telefone a confirmar]</li>
+          <li data-fill="email">[e-mail a confirmar]</li>
+          <li data-fill="endereco">[Endereço a confirmar]</li>
+          <li data-fill="horario">[Horário a confirmar]</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Mimo &amp; Monte. Todos os direitos reservados.</span>
+      <span><a href="privacidade.html">Política de privacidade</a> · <a href="contrato.html">Política de locação</a></span>
+    </div>
+  </div>
+  <div class="footer-credit">Criado por Fabiano Galego</div>
+</footer>
+<a class="whats-float" data-whatsapp="" href="#" aria-label="Falar no WhatsApp"><img src="images/whatsapp-icon.png" alt="WhatsApp"></a>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/duvidas-widget.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/vitrine-data.js"></script>
+<script type="module" src="js/vitrine/app.js"></script>
+</body>
+</html>

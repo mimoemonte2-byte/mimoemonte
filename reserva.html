@@ -23,6 +23,7 @@
         <li><a href="index.html">Home</a></li>
         <li><a href="sobre.html">Sobre nós</a></li>
         <li><a href="kits.html">Kit's</a></li>
+        <li><a href="vitrine.html">Vitrine 3D</a></li>
         <li><a href="contato.html">Contato</a></li>
         <li><a href="duvidas.html">Dúvidas</a></li>
       </ul>
@@ -49,6 +50,7 @@
     <a href="index.html">Home</a>
     <a href="sobre.html">Sobre nós</a>
     <a href="kits.html">Kit's</a>
+    <a href="vitrine.html">Vitrine 3D</a>
     <a href="contato.html">Contato</a>
     <a href="duvidas.html">Dúvidas</a>
     <a href="reserva.html">📦 Minha reserva</a>
@@ -151,6 +153,7 @@
           <li><a href="index.html">Home</a></li>
           <li><a href="sobre.html">Sobre nós</a></li>
           <li><a href="kits.html">Kit's</a></li>
+        <li><a href="vitrine.html">Vitrine 3D</a></li>
           <li><a href="contato.html">Contato</a></li>
           <li><a href="duvidas.html">Dúvidas</a></li>
         </ul>
@@ -190,6 +193,7 @@
 <script src="js/duvidas-widget.js"></script>
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
+<script src="js/vitrine-data.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", async () => {
     const select = document.querySelector("#r-kit");
@@ -202,12 +206,24 @@
     const params = new URLSearchParams(location.search);
     if(params.get("id")) select.value = params.get("id");
 
+    // Vitrine 3D: tema sem kit confirmado chega como ?tema=<slug>
+    const temaSlug = params.get("tema");
+    const temaVitrine = (window.VITRINE_THEMES || []).find(t => t.slug === temaSlug);
+    if(temaVitrine && !params.get("id")){
+      const opt = document.createElement("option");
+      opt.value = "vitrine:" + temaVitrine.slug;
+      opt.textContent = `Vitrine 3D — ${temaVitrine.name} (sob consulta)`;
+      select.prepend(opt);
+      select.value = opt.value;
+    }
+
     document.querySelector("#reserva-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       const submitBtn = e.target.querySelector("button[type='submit']");
       const nome = document.querySelector("#r-nome").value;
       const telefone = document.querySelector("#r-telefone").value;
       const kit = allKits.find(k => k.id === select.value);
+      const kitTitle = kit ? kit.title : (select.selectedOptions[0]?.textContent || "");
       const retirada = document.querySelector("#r-retirada").value;
       const devolucao = document.querySelector("#r-devolucao").value;
       const obs = document.querySelector("#r-obs").value;
@@ -220,7 +236,7 @@
             user_id: user ? user.id : null,
             nome, telefone,
             kit_id: kit ? kit.id : null,
-            kit_title: kit ? kit.title : null,
+            kit_title: kitTitle || null,
             data_retirada: retirada || null,
             data_devolucao: devolucao || null,
             observacoes: obs || null
@@ -233,7 +249,7 @@
       }
 
       let msg = `Olá! Gostaria de consultar disponibilidade para reserva.\n`;
-      msg += `Nome: ${nome}\nTelefone: ${telefone}\nKit: ${kit ? kit.title : ""}\n`;
+      msg += `Nome: ${nome}\nTelefone: ${telefone}\nKit: ${kitTitle}\n`;
       if(retirada) msg += `Retirada: ${retirada}\n`;
       if(devolucao) msg += `Devolução: ${devolucao}\n`;
       if(obs) msg += `Observações: ${obs}\n`;
